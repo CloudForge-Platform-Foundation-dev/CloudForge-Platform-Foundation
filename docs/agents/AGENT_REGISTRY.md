@@ -108,7 +108,7 @@ Agent ห้ามข้ามขั้นจาก `draft`/`testing` ไป `pr
 
 ## 10. Open Items
 
-- [ ] เขียนไฟล์ metadata แยกต่อ agent (`docs/agents/app1-extraction-agent.md` ฯลฯ)
+- [x] เขียนไฟล์ metadata แยกต่อ agent (`docs/agents/app1-extraction-agent.md` ฯลฯ)
       เมื่อรายละเอียดมากพอที่จะแยกออกจากตารางรวม
 - [ ] นิยาม `app3-orchestration-agent` ให้ชัดเจนเมื่อเริ่มออกแบบ App 3 จริง
 - [ ] ตัดสินใจเครื่องมือ/framework สำหรับรัน test ชุดข้อ 6 แบบอัตโนมัติ (ผูกกับ CI)
