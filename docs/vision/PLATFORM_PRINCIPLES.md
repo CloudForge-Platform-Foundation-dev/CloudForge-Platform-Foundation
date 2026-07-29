@@ -1,5 +1,3 @@
-# CloudForge-Platform-Foundation
-Enterprise Architecture, Standards, Governance and Canonical Data Model for the CloudForge Platform.
 # Platform Principles — CloudForge Platform Foundation
 
 หลักการเหล่านี้เป็นข้อบังคับขั้นต่ำที่ทุกแอปในเครือ (App 1, 2, 3 และแอปในอนาคต) ต้องยึดถือ
