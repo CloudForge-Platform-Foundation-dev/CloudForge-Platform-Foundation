@@ -1,0 +1,36 @@
+name: Security & Governance Check
+
+on:
+  workflow_call:
+    inputs:
+      rules_file:
+        description: 'Path to firestore.rules file'
+        required: false
+        default: 'firestore.rules'
+        type: string
+
+jobs:
+  firestore-rules-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Scan Firestore Rules
+        run: |
+          RULES_FILE="${{ inputs.rules_file }}"
+          
+          if [ ! -f "$RULES_FILE" ]; then
+            echo "⚠️ WARNING: $RULES_FILE not found, skipping scan."
+            exit 0
+          fi
+
+          if grep -qE "allow.*true|auth\s*==\s*null" "$RULES_FILE"; then
+            echo "❌ FAIL: Found open/insecure Firestore rules in $RULES_FILE!"
+            echo "----------------------------------------"
+            grep -nE "allow.*true|auth\s*==\s*null" "$RULES_FILE"
+            echo "----------------------------------------"
+            exit 1
+          else
+            echo "✅ PASS: No insecure Firestore rules detected."
+          fi
