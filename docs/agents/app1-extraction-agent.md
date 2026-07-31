@@ -11,7 +11,7 @@
 - **Target Data:** เอกสารประเภท PDF / Text
 
 ## Governance & Security
-- **PII Access:** No
+- **PII Access:** yes
 - **Model:** Gemini API
 - **Cost Allocation:** Budget รวมไม่เกินวงเงินโปรเจกต์ (~30,000-70,000 บาท)
 - **Metrics Tracked:** Request count, cost, error rate (ส่งเข้า GovernanceMetric)

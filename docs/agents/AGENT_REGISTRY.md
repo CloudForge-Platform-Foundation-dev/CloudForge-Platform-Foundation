@@ -34,7 +34,7 @@ testing requirement, cost/security guardrail ที่ผูกกับแต�
 
 | Agent ID | แอปที่ใช้ | หน้าที่ | Model | สถานะ |
 |---|---|---|---|---|
-| `app1-extraction-agent` | App 1 (Dynamic Ingest AI) | สกัดข้อมูลจากไฟล์ดิบ (นักเรียน/ครู/การเงิน) เป็น structured record | Gemini | 🟢 ตรวจสอบแล้ว (มี 5 จุดต้องระวังก่อนขายจริง — ดู README) |
+| `app1-extraction-agent` | App 1 (Dynamic Ingest AI) | สกัดข้อมูลจากไฟล์ดิบ (นักเรียน/ครู/การเงิน) เป็น structured record | Gemini | 🟡 draft หรือ 🟡 testing
 | `app2-insight-agent` | App 2 (Dynamic Insight AI) | วิเคราะห์/สรุปข้อมูลที่สกัดแล้ว เขียนผลลง `analysis_audit_log` | Gemini | 🔴 ยังไม่ผ่านมาตรฐานความปลอดภัย (ดูข้อ 6) |
 | `app3-orchestration-agent` | App 3 (แนวคิด ยังไม่สร้าง) | ยังไม่นิยามชัดเจน — คาดว่าเป็นตัวประสาน query ระหว่าง Demo/Live/Setup Wizard | ยังไม่ตัดสินใจ | ⚪ ยังไม่เริ่มสร้าง |
 
