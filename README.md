@@ -496,8 +496,6 @@ The platform is designed to be:
 These principles guide every architectural and engineering decision across the platform.
 
 ---
-
-> **Next:** Part 3 covers Governance, Development Lifecycle, Release Management, Versioning Strategy, Quality Gates, and Enterprise Operating Model.
 # Platform Governance
 
 Enterprise platforms succeed through governance, not just technology.
@@ -744,11 +742,13 @@ Recommended Git workflow:
 ```text
 main
  │
+ ├── develop
+ │
  ├── release/*
  │
  ├── feature/*
  │
- ├── bugfix/*
+ ├── fix/*
  │
  ├── hotfix/*
  │
@@ -826,8 +826,6 @@ Enterprise SaaS Platform
 The roadmap provides a structured evolution from foundational standards to a complete enterprise AI platform.
 
 ---
-
-> **Next:** Part 4 completes the README with Contribution Guidelines, Security Policy, Support, Repository Standards, Future Vision, and the closing section that serves as the official landing page for CloudForge Platform Foundation.
 # Contributing
 
 CloudForge Platform Foundation is the architectural heart of the CloudForge ecosystem.
@@ -1422,5 +1420,4 @@ By centralizing architecture, governance, security, engineering standards, and s
 **Design Once. Reuse Everywhere. Scale Without Limits.**
 
 </p>
-
-> **Next:** Part 2 introduces the Platform Architecture Layers, Repository Structure, Documentation Map, and the relationship between CloudForge Platform Foundation and every CloudForge Studio.
+

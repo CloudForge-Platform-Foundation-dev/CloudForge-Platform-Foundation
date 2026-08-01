@@ -105,6 +105,27 @@ develop
 
 ---
 
+## Release Branch
+
+รูปแบบ
+
+```
+release/<version>
+```
+
+ตัวอย่าง
+
+```
+release/v0.2.0
+```
+
+ใช้สำหรับ
+
+- เตรียม Release
+- Final Testing ก่อน Merge เข้า main
+
+---
+
 ## Feature Branch
 
 รูปแบบ
@@ -136,6 +157,27 @@ fix/<issue-name>
 ```
 fix/cache-validation
 ```
+
+---
+
+## Hotfix Branch
+
+รูปแบบ
+
+```
+hotfix/<issue-name>
+```
+
+ตัวอย่าง
+
+```
+hotfix/security-patch
+```
+
+ใช้สำหรับ
+
+- แก้ปัญหาเร่งด่วนบน Production (main)
+- ต้อง Merge กลับทั้ง main และ develop
 
 ---
 
