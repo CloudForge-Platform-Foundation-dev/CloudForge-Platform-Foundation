@@ -74,7 +74,7 @@ CloudForge-Platform-Foundation
 | ROADMAP.md         | Development Roadmap  | ⏳      |
 | CHANGELOG.md       | Release History      | ⏳      |
 | VERSION            | Current Version      | ⏳      |
-| LICENSE            | License Information  | ⏳      |
+| LICENSE            | License Information  | ✅      |
 | CONTRIBUTING.md    | Contribution Guide   | ⏳      |
 | SECURITY.md        | Security Policy      | ⏳      |
 | SUPPORT.md         | Support Information  | ⏳      |
