@@ -6,7 +6,7 @@ Status: Draft
 
 Owner: CloudForge Platform
 
-Last Updated: 2026-08-01
+Last Updated: 2026-08-02
 
 ---
 
@@ -47,7 +47,7 @@ Every Studio is independent in its business capability but shares common platfor
 
 +-------------------------------------------------------+
 |                 AI Studio Layer                        |
-| Ingest | Insight | Simulation | Deployment | Ops      |
+| Ingest | Insight | Simulation | Deploy&Ops | Guard    |
 +-------------------------------------------------------+
 
 +-------------------------------------------------------+
@@ -85,6 +85,8 @@ Components
 - GraphQL API
 - CLI
 - Mobile Support
+- **Dynamic Command Center (Platform Shell)** — overview dashboard ที่ครอบมองภาพรวมของทั้ง 5
+  Studio ด้านล่าง ไม่ใช่ Studio แยก (ดูเหตุผลที่ `docs/adr/ADR-0009-five-studio-application-model.md`)
 
 ---
 
@@ -92,13 +94,17 @@ Components
 
 Provides business capabilities through specialized AI Studios.
 
-CloudForge Ingest Studio
+> **หมายเหตุ (ADR-0009):** รายชื่อ Studio ด้านล่างถูกปรับให้ตรงกับ Application Model จริง — รวม
+> Deployment กับ Operations เป็น Studio เดียว และแยก Governance & Security ออกมาเป็น Studio ที่ 5
+> (เดิมเคยฝังอยู่เป็น bullet ใต้ Operations) ชื่อ repo จริง (หรือที่ยังไม่มี repo) กำกับไว้ในวงเล็บ
+
+CloudForge Ingest Studio (`dynamic-ingest-ai` — ✅ มี repo จริง)
 
 - Data Collection
 - Classification
 - Metadata Extraction
 
-CloudForge Insight Studio
+CloudForge Insight Studio (`dynamic-insight-ai` — ✅ มี repo จริง)
 
 - Requirement Analysis
 - Architecture Design
@@ -106,28 +112,32 @@ CloudForge Insight Studio
 - Roadmap
 - Risk Analysis
 
-CloudForge Simulation Studio
+CloudForge Simulation Studio (`dynamic-plan-ai` — ❌ ยังไม่มี repo)
 
 - Executive Dashboard
 - Scenario Simulation
 - Cost Comparison
 - Visualization
 
-CloudForge Deployment Studio
+CloudForge Deployment & Operations Studio (`dynamic-ops-ai` — ❌ ยังไม่มี repo)
 
 - Terraform
 - CloudFormation
 - Bicep
 - CI/CD
 - Deployment Automation
-
-CloudForge Operations Studio
-
 - Monitoring
-- Security
 - Incident Management
 - Performance
 - Cost Optimization
+
+CloudForge Governance & Security Studio (`dynamic-guard-ai` — ❌ ยังไม่มี repo — งาน Security
+ตอนนี้ยังรันอยู่ใน `dynamic-insight-ai` จนกว่าจะแยก repo จริง ดู `PLATFORM_COMPONENTS.md` ข้อ 2)
+
+- Security
+- Compliance (PDPA)
+- Guardrails
+- Audit Logging
 
 ---
 

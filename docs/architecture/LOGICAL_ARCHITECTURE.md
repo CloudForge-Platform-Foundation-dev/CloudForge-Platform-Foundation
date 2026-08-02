@@ -6,7 +6,7 @@ Status: Draft
 
 Owner: CloudForge Platform
 
-Last Updated: 2026-08-01
+Last Updated: 2026-08-02
 
 ---
 
@@ -29,6 +29,7 @@ Components
 - REST API
 - GraphQL API
 - CLI
+- Dynamic Command Center (Platform Shell) — ดู `docs/adr/ADR-0009-five-studio-application-model.md`
 
 ---
 
@@ -36,13 +37,16 @@ Components
 
 Business capability layer.
 
+> หมายเหตุ (ADR-0009): รวม Deployment + Operations เป็น Studio เดียว และแยก Governance & Security
+> ออกมาเป็น Studio ที่ 5 ให้ตรงกับ `ENTERPRISE_ARCHITECTURE.md` และ `PLATFORM_COMPONENTS.md`
+
 Studios
 
-- CloudForge Ingest Studio
-- CloudForge Insight Studio
-- CloudForge Simulation Studio
-- CloudForge Deployment Studio
-- CloudForge Operations Studio
+- CloudForge Ingest Studio (`dynamic-ingest-ai`)
+- CloudForge Insight Studio (`dynamic-insight-ai`)
+- CloudForge Simulation Studio (`dynamic-plan-ai` — ยังไม่มี repo)
+- CloudForge Deployment & Operations Studio (`dynamic-ops-ai` — ยังไม่มี repo)
+- CloudForge Governance & Security Studio (`dynamic-guard-ai` — ยังไม่มี repo)
 
 ---
 
