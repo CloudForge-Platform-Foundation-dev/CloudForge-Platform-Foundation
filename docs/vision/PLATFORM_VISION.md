@@ -1,56 +1,71 @@
-# Platform Principles — CloudForge Platform Foundation
+# Platform Vision — CloudForge Platform Foundation
 
-หลักการเหล่านี้เป็นข้อบังคับขั้นต่ำที่ทุกแอปในเครือ (App 1, 2, 3 และแอปในอนาคต) ต้องยึดถือ
-ร่วมกัน ไม่ใช่แนวทางแบบเลือกทำหรือไม่ทำก็ได้
-
-## 1. Security by default, ไม่ใช่ security ทีหลัง
-
-- ค่าเริ่มต้นของทุกสิทธิ์ต้องเป็น **fail-closed** (ปฏิเสธก่อน แล้วค่อยเปิดเฉพาะที่จำเป็น)
-  ไม่ใช่ fail-open
-- ห้าม deploy Firestore rule หรือ endpoint ใดที่เปิด read/write แบบไม่เช็ค authentication
-  แม้จะเป็นแค่ระหว่างพัฒนา/เดโม
-- role หรือสิทธิ์ของผู้ใช้ต้อง verify จาก token ที่เชื่อถือได้ (เช่น Firebase Auth ID token)
-  เสมอ ห้ามเชื่อค่าที่ client ส่งมาเอง (เช่น custom header) โดยไม่ตรวจสอบ
-
-## 2. ข้อมูลจริงต้อง persist จริง ห้าม mock แอบอ้างว่าเป็นของจริง
-
-- Audit log, metrics, และข้อมูลที่อ้างว่า "บันทึกแล้ว" ต้องเขียนลงฐานข้อมูลจริงที่ไม่หายเมื่อ
-  restart server
-- ถ้าฟีเจอร์ยังเป็น mock/in-memory ต้องระบุไว้ชัดเจนในโค้ดและเอกสาร ไม่ปล่อยให้ UI แสดงผล
-  เหมือนเป็นข้อมูลจริง
-
-## 3. Demo กับ Live ต้องแยกกันชัดเจน แต่สลับกันได้ด้วย toggle เดียว
-
-- แอปที่มีทั้งโหมดสาธิต (ข้อมูลจำลอง) และโหมดใช้งานจริง (ข้อมูลลูกค้าจริง) ต้องออกแบบให้
-  สลับโหมดได้จากจุดเดียว ไม่ใช่ build คนละเวอร์ชันแยกกัน
-- โหมด Demo ต้องไม่มีทางแตะฐานข้อมูลจริงของลูกค้ารายใดได้โดยไม่ตั้งใจ
-
-## 4. Data model กลางเป็นสัญญาระหว่างแอป
-
-- ทุกแอปที่ต้องแลกเปลี่ยนข้อมูลกัน (เช่น App 3 อ่านสถานะจาก App 1/2) ต้องอ้างอิง schema
-  ใน `docs/data-model/` และ `schemas/` ของ repo นี้ ห้ามผูก schema เฉพาะกิจในแอปตัวเอง
-  แล้วให้แอปอื่นเดาโครงสร้างเอาเอง
-- การเปลี่ยน schema ที่กระทบมากกว่า 1 แอป ต้องบันทึกเป็น ADR ก่อนแก้จริง
-
-## 5. Multi-tenant isolation ต้องพิสูจน์ได้ ไม่ใช่แค่ตั้งใจไว้
-
-- ข้อมูลของลูกค้าแต่ละรายต้องแยกกันในระดับที่ตรวจสอบได้จริง (เช่น Firestore rule ที่ผูกกับ
-  tenant ID จาก auth token) ไม่ใช่แค่แยกด้วย logic ฝั่ง frontend
-- ก่อนเปิดโหมด Live ให้ลูกค้าดูสถานะโปรเจกต์ตัวเอง ต้องมี test case ยืนยันว่าลูกค้า A
-  มองไม่เห็นข้อมูลของลูกค้า B
-
-## 6. ต้นทุน AI API ต้องคาดการณ์ได้และมี guardrail
-
-- ทุกแอปที่เรียก Gemini API หรือโมเดล AI อื่นต้องมี cost guard / token guardrail ไม่ปล่อย
-  ให้เรียกไม่จำกัด
-- ประเมินงบประมาณต่อโปรเจกต์ล่วงหน้า และมีจุดแจ้งเตือนเมื่อใกล้เกินงบ
-
-## 7. ทุกการตัดสินใจสถาปัตยกรรมข้ามแอปต้องมีบันทึก
-
-- ใช้ ADR (`docs/adr/`) บันทึกเหตุผลของการตัดสินใจที่กระทบมากกว่า 1 แอป เพื่อให้คนที่มาทีหลัง
-  เข้าใจว่าทำไมถึงเลือกทางนี้ ไม่ใช่แค่ผลลัพธ์สุดท้าย
+> **หมายเหตุ:** ไฟล์นี้เคยมีเนื้อหาซ้ำกับ `PLATFORM_PRINCIPLES.md` ทั้งไฟล์ (คนละเรื่องกัน
+> แต่ถูกวางเนื้อหาผิดไฟล์) แก้ไขแล้วเมื่อ 2026-08-02 — ดูหลักการปฏิบัติ (principles) ที่
+> `PLATFORM_PRINCIPLES.md` แทน ไฟล์นี้พูดถึง**เป้าหมายและทิศทาง**เท่านั้น
 
 ---
 
-หลักการเหล่านี้ใช้ตรวจสอบ (checklist) ทุกครั้งก่อนแอปใดในเครือขึ้น production เพิ่มหรือแก้ไข
-ได้ผ่าน ADR เท่านั้น ไม่ใช่แก้ตรงนี้ตรงๆ โดยไม่มีบันทึกเหตุผล
+## 1. Vision Statement
+
+CloudForge มีเป้าหมายเป็น **Enterprise AI Operating Platform** — แพลตฟอร์มกลางที่ทุก AI
+Studio ในเครือ (Ingest, Insight, Simulation, Deployment & Operations, Governance & Security)
+ใช้ Foundation เดียวกัน แทนที่จะต่างคนต่างสร้างมาตรฐานของตัวเอง
+
+*(อ้างอิงจาก `CLOUDFORGE_CONSTITUTION.md` ข้อ 11 และ `ROADMAP.md` — Long-Term Vision)*
+
+## 2. Mission
+
+ช่วยองค์กรสร้าง
+
+- AI Applications
+- Multi-Agent Systems
+- Cloud Architecture
+- Knowledge Platform
+- Enterprise Automation
+
+บน Foundation เดียวกัน เพื่อให้ทุก Studio ใช้งานร่วมกันอย่างเป็นมาตรฐาน ไม่ใช่ต่างระบบต่างมาตรฐาน
+
+## 3. Goals
+
+| เป้าหมาย | อธิบาย |
+|---|---|
+| Single Source of Truth | Repository เป็นแหล่งข้อมูลหลัก ไม่ใช่ chat history หรือ personal notes |
+| Documentation First | ทุก Feature เริ่มจาก requirement/architecture ก่อนเขียนโค้ด |
+| AI Native Architecture | AI เป็น core capability ไม่ใช่ feature เสริม |
+| Security by Design | ออกแบบความปลอดภัยตั้งแต่ต้น ไม่ใช่เพิ่มทีหลัง |
+| Enterprise Governance | ทุกการตัดสินใจสำคัญมี ADR รองรับ ตรวจสอบย้อนกลับได้ |
+
+## 4. Strategic Direction
+
+ทิศทางการพัฒนาแบ่งเป็นระยะตาม `ROADMAP.md`:
+
+- **ระยะสั้น (v0.1–v0.3):** วางรากฐาน Repository, Governance, และ Core Platform Model
+- **ระยะกลาง (v0.4–v0.8):** สร้าง AI Gateway, Agent Runtime, Workflow Engine, Security
+  Platform, Developer Platform
+- **ระยะยาว (v0.9–v1.0 และหลังจากนั้น):** เชื่อมทุก Studio เข้าด้วยกัน (Studio Integration)
+  ไปสู่ Enterprise Release ที่รองรับ Multi-Cloud, Multi-Region, และ Marketplace ต่างๆ
+
+ดูรายละเอียด version-by-version ที่ `ROADMAP.md` และดูสถานะ Studio จริง ณ ปัจจุบันที่
+`docs/architecture/PLATFORM_COMPONENTS.md` (ตาม ADR-0009)
+
+## 5. What This Vision Is Not
+
+เพื่อไม่ให้สับสนกับเอกสารอื่นในโฟลเดอร์เดียวกัน:
+
+- **ไม่ใช่หลักการปฏิบัติที่บังคับใช้จริง** (ดู `PLATFORM_PRINCIPLES.md` แทน)
+- **ไม่ใช่สถาปัตยกรรมระดับ component** (ดู `docs/architecture/`)
+- **ไม่ใช่ roadmap ที่มี version/milestone ละเอียด** (ดู `ROADMAP.md`)
+
+---
+
+## Related Documents
+
+- PLATFORM_PRINCIPLES.md
+- CLOUDFORGE_CONSTITUTION.md
+- ROADMAP.md
+- docs/architecture/ENTERPRISE_ARCHITECTURE.md
+
+---
+
+End of Platform Vision
