@@ -47,6 +47,11 @@ ADR สามารถมีสถานะดังนี้
 
 # ADR Naming Convention
 
+> **หมายเหตุ (2026-08-02):** เดิม `GOVERNANCE_MODEL.md` (Sprint 4) มีคิว ADR ของตัวเองแยกต่างหาก
+> ใช้เลข 3 หลัก (`ADR-001` ถึง `ADR-006`) คนละระบบกับที่นี่ (4 หลัก) — **รวมเข้าด้วยกันแล้ว**
+> เป็นเลขทางการ 4 หลักสายเดียว (ADR-0010 ถึง ADR-0015) ดูตาราง mapping ที่
+> `GOVERNANCE_MODEL.md` ข้อ 3.1 (อัปเดตแล้ว) ห้ามใช้เลข 3 หลักอีกต่อไปทั้ง repo
+
 ```
 ADR-0001-title.md
 ADR-0002-title.md
@@ -95,6 +100,12 @@ ADR-0003-immutable-knowledge-repository.md
 | ADR-0007 | Agent Runtime Architecture | Planned | v0.5.0 |
 | ADR-0008 | Security Architecture | Planned | v0.7.0 |
 | ADR-0009 | Five-Studio Application Model | Accepted | v0.1.0 |
+| ADR-0010 | Tenant Isolation Model | Proposed | v0.1.0 |
+| ADR-0011 | App 3 (Platform Shell) Firestore Connection Timing — Mock-first vs Real from Start | Proposed | v0.1.0 |
+| ADR-0012 | Inter-App API Pattern — REST vs Firestore Listener | Proposed | v0.1.0 |
+| ADR-0013 | `governance_metrics` Persistence Start Timing | Proposed | v0.1.0 |
+| ADR-0014 | Final Name of App 3 (Dynamic Command Center vs Dynamic Control Tower) | Proposed | v0.1.0 |
+| ADR-0015 | Customer Data Visibility Scope in Live Mode | Proposed | v0.1.0 |
 
 ---
 
