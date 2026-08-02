@@ -77,7 +77,7 @@ CloudForge-Platform-Foundation
 | LICENSE            | License Information  | ✅      |
 | CONTRIBUTING.md    | Contribution Guide   | ⏳      |
 | SECURITY.md        | Security Policy      | ⏳      |
-| SUPPORT.md         | Support Information  | ⏳      |
+| SUPPORT.md         | Support Information  | ✅      |
 | CODE_OF_CONDUCT.md | Community Guidelines | ⏳      |
 
 ---
