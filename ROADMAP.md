@@ -9,7 +9,7 @@
 >
 > Current Version: v0.1.0
 >
-> Last Updated: 2026-07-30
+> Last Updated: 2026-08-02
 
 ---
 
@@ -43,6 +43,22 @@ Platform นี้จะเป็น Infrastructure Layer ที่ทุก Stu
 - ZIP Archive
 
 ห้ามมี Release ที่ Documentation ไม่ครบ
+
+---
+
+# Studio / Application Roadmap (ADR-0009)
+
+> ตาม `docs/adr/ADR-0009-five-studio-application-model.md` แพลตฟอร์มประกอบด้วย 5 Studio
+> ตารางนี้สรุปสถานะ repo จริงของแต่ละ Studio ให้ตรงกับ `PLATFORM_COMPONENTS.md`
+> ต้องอัปเดตตารางนี้ทุกครั้งที่มี repo ใหม่ถูกสร้างจริง
+
+| Studio | Repo | สถานะ | เป้าหมายเริ่มสร้าง |
+|---|---|---|---|
+| Ingest Studio | `dynamic-ingest-ai` | ✅ มี repo จริง | เสร็จแล้ว |
+| Insight Studio | `dynamic-insight-ai` | ✅ มี repo จริง (ยังถือ security scope ชั่วคราว) | เสร็จแล้ว |
+| Simulation Studio | `dynamic-plan-ai` | ❌ ยังไม่มี repo | ยังไม่กำหนด — รอ Command Center (Platform Shell) เริ่มสร้างก่อน |
+| Deployment & Operations Studio | `dynamic-ops-ai` | ❌ ยังไม่มี repo | ยังไม่กำหนด |
+| Governance & Security Studio | `dynamic-guard-ai` | ❌ ยังไม่มี repo | ยังไม่กำหนด — priority สูงเนื่องจากต้องรับช่วง security bug วิกฤตจาก App 2 |
 
 ---
 
@@ -249,6 +265,10 @@ Output
 
 Security Framework
 
+> **หมายเหตุ (ADR-0009):** version นี้คือ platform-level security capability (RBAC/ABAC/Policy
+> Engine ที่ใช้ร่วมกันทุก Studio) — คนละส่วนกับ `dynamic-guard-ai` ซึ่งเป็น Studio แอปพลิเคชันที่
+> ให้บริการ Security/Governance เฉพาะทาง ดู Studio Roadmap ด้านบน
+
 ---
 
 # v0.8.0
@@ -287,17 +307,15 @@ Objective
 
 Deliverables
 
-Ingest Studio
+- Ingest Studio (`dynamic-ingest-ai`)
+- Insight Studio (`dynamic-insight-ai`)
+- Simulation Studio (`dynamic-plan-ai`)
+- Deployment & Operations Studio (`dynamic-ops-ai`)
+- Governance & Security Studio (`dynamic-guard-ai`)
+- Knowledge Sync
 
-Architecture Studio
-
-Security Studio
-
-Data Studio
-
-Governance Studio
-
-Knowledge Sync
+> รายชื่อ Studio ปรับให้ตรงกับ `docs/adr/ADR-0009-five-studio-application-model.md` แล้ว
+> (เดิม deliverables list นี้ใช้ชื่อ Studio ที่ไม่ตรงกับที่นิยามในเอกสารอื่น — แก้แล้ว)
 
 Output
 
