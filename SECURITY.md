@@ -10,7 +10,7 @@
 >
 > Status: Active
 >
-> Last Updated: 2026-07-30
+> Last Updated: 2026-08-02
 
 ---
 
@@ -246,6 +246,21 @@ AI Component ต้องมี
 ---
 
 # 9. Vulnerability Reporting
+
+## ช่องทางรายงาน
+
+**ใช้ GitHub Security Advisories** — ห้ามเปิดเป็น Public Issue เด็ดขาด (ดู `SUPPORT.md` ข้อ 5)
+
+```
+https://github.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/security/advisories/new
+```
+
+ช่องทางนี้เป็น private ระหว่างผู้รายงานกับผู้ดูแล repository เท่านั้น เหมาะกับการรายงานช่องโหว่
+โดยเฉพาะ — ต่างจาก GitHub Issues ทั่วไปที่เป็น public
+
+ตอนนี้ยังไม่มีทีม Security แยกต่างหาก ผู้ดูแล repository จะเป็นผู้รับเรื่องโดยตรง
+
+---
 
 หากพบช่องโหว่
 
