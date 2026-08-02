@@ -8,7 +8,7 @@
 >
 > Current Version: v0.1.0
 >
-> Last Updated: 2026-07-30
+> Last Updated: 2026-08-02
 
 ---
 
@@ -94,6 +94,7 @@ ADR-0003-immutable-knowledge-repository.md
 | ADR-0006 | Knowledge Repository Architecture | Planned | v0.3.0 |
 | ADR-0007 | Agent Runtime Architecture | Planned | v0.5.0 |
 | ADR-0008 | Security Architecture | Planned | v0.7.0 |
+| ADR-0009 | Five-Studio Application Model | Accepted | v0.1.0 |
 
 ---
 
