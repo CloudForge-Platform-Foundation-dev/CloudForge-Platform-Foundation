@@ -21,13 +21,19 @@
 
 ## 2. App 2 — Dynamic Insight AI
 
+> **หมายเหตุ (ADR-0009):** เดิม component นี้แบกงาน Security/Governance ไว้ด้วย ตาม ADR-0009
+> งานส่วนนั้นถูกกำหนดให้ย้ายไป `dynamic-guard-ai` (Governance & Security Studio) ในระยะยาว
+> **แต่ ณ วันที่เขียนเอกสารนี้ `dynamic-guard-ai` ยังไม่มี repo ยังไม่มีโค้ดสักบรรทัด**
+> ดังนั้นรายละเอียดและบั๊กด้าน Security ด้านล่างนี้ **ยังคงเป็นของจริงใน `dynamic-insight-ai`
+> เหมือนเดิมทุกประการ** จนกว่าจะมีการแยก repo จริง ห้ามเข้าใจว่าปัญหาถูกย้ายไปจัดการที่อื่นแล้ว
+
 | หัวข้อ | รายละเอียด |
 |---|---|
-| **หน้าที่หลัก** | วิเคราะห์ข้อมูลที่ App 1 สกัดมา + บังคับใช้นโยบาย Security & Data Governance |
+| **หน้าที่หลัก** | วิเคราะห์ข้อมูลที่ App 1 สกัดมา *(ขอบเขต Security & Data Governance เดิมกำลังทยอยย้ายไป `dynamic-guard-ai` ตาม ADR-0009 — ดูหมายเหตุด้านบน)* |
 | **Input** | ข้อมูลจาก `extracted_data` |
 | **Output** | ผลวิเคราะห์ + `analysis_audit_log` (บันทึกทุกการกระทำ) |
 | **ผู้ใช้งาน** | ทีม implement, ทีมตรวจสอบความปลอดภัย |
-| **Sub-components** | Prompt Injection Test, Cost Guard/Token Guardrails, PDPA Cascade Console, Secret Scanning, Audit Trail Log (filter ตาม phase/category/batch/confidence) |
+| **Sub-components** | Prompt Injection Test, Cost Guard/Token Guardrails, PDPA Cascade Console, Secret Scanning, Audit Trail Log (filter ตาม phase/category/batch/confidence) — *sub-components เหล่านี้คือของที่จะย้ายไป `dynamic-guard-ai` ในอนาคต ตอนนี้ยังรันอยู่ใน repo นี้* |
 | **สถานะ** | อยู่ระหว่างแก้ security bug — ดูรายละเอียดที่ `docs/security/` |
 | **เชื่อมต่อกับ** | รับข้อมูลจาก App 1, ให้ App 3 อ่านสถานะแบบ read-only |
 
@@ -40,7 +46,12 @@
 
 ---
 
-## 3. App 3 — Dynamic Command Center
+## 3. App 3 — Dynamic Command Center (Platform Shell)
+
+> **หมายเหตุ (ADR-0009):** Component นี้**ไม่ใช่ Studio ที่ 6** — จัดวางเป็น **"Platform Shell"**
+> ใน Experience Layer แทน (ครอบมองภาพรวมของ 5 Studio: Ingest, Insight, Simulation, Operations,
+> Governance & Security) เพราะหน้าที่จริงคือ Dashboard/Orchestration ไม่มี business capability
+> ของตัวเอง — ดูเหตุผลเต็มที่ `docs/adr/ADR-0009-five-studio-application-model.md`
 
 | หัวข้อ | รายละเอียด |
 |---|---|
@@ -59,7 +70,18 @@
 
 ---
 
-## 4. Data Layer — Firestore
+## 3.5 Component ที่วางแผนไว้ (ยังไม่มีโค้ด) — ตาม ADR-0009
+
+> Component ทั้ง 3 นี้เป็น**เป้าหมายสถาปัตยกรรมเท่านั้น** ยังไม่มี repo ยังไม่มีการเริ่มเขียนโค้ด
+> ห้ามอ้างอิงเป็นของที่ใช้งานได้จริงในเอกสารอื่นจนกว่าจะมีการอัปเดตสถานะตรงนี้ก่อน
+
+| Component | Studio ที่แมป | หน้าที่ตามแผน | สถานะ |
+|---|---|---|---|
+| `dynamic-plan-ai` | Simulation Studio | ออกแบบสถาปัตยกรรม/จำลองสถานการณ์/Roadmap | ❌ ยังไม่มี repo |
+| `dynamic-ops-ai` | Deployment / Operations Studio | Deploy, Monitoring | ❌ ยังไม่มี repo |
+| `dynamic-guard-ai` | Governance & Security Studio | Security Guardrails, PDPA, Audit Log (ของที่จะย้ายมาจาก App 2 — ดูหมายเหตุในข้อ 2) | ❌ ยังไม่มี repo |
+
+---
 
 | หัวข้อ | รายละเอียด |
 |---|---|
@@ -85,9 +107,15 @@
 | Component | เจ้าของ (ทีม) | Repo |
 |---|---|---|
 | App 1 — Dynamic Ingest AI | ทีม implement | `dynamic-ingest-ai` |
-| App 2 — Dynamic Insight AI | ทีม implement + security | `dynamic-insight-ai` |
-| App 3 — Dynamic Command Center | ทีมขาย + ทีม implement | ยังไม่สร้าง repo |
+| App 2 — Dynamic Insight AI | ทีม implement (ยังถือ scope security ไว้ชั่วคราว — ดูข้อ 2) | `dynamic-insight-ai` |
+| App 3 — Dynamic Command Center (Platform Shell) | ทีมขาย + ทีม implement | ยังไม่สร้าง repo |
+| `dynamic-plan-ai` (ยังไม่มีโค้ด) | ยังไม่กำหนด | ยังไม่สร้าง repo |
+| `dynamic-ops-ai` (ยังไม่มีโค้ด) | ยังไม่กำหนด | ยังไม่สร้าง repo |
+| `dynamic-guard-ai` (ยังไม่มีโค้ด) | ยังไม่กำหนด (จะรับช่วง security scope จาก App 2) | ยังไม่สร้าง repo |
 | Platform Foundation (เอกสารนี้) | ทุกทีมร่วมกัน | `CloudForge-Platform-Foundation` |
 
 การเปลี่ยนแปลงที่กระทบมากกว่า 1 component ต้องบันทึกเป็น ADR ใน `docs/adr/` ก่อนแก้จริง
 ตามหลักการใน `PLATFORM_PRINCIPLES.md` ข้อ 7
+
+ดูเหตุผลของการปรับ Component Model นี้ทั้งหมดได้ที่
+`docs/adr/ADR-0009-five-studio-application-model.md`
