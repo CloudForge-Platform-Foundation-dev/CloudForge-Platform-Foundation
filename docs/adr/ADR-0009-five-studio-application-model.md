@@ -8,6 +8,7 @@
 ## Status
 
 **Accepted** — 2026-08-02
+**Updated** — 2026-08-03 (แก้ไขรายละเอียดสถานะบั๊กความปลอดภัยให้ตรงกับผลตรวจสอบจริง)
 
 ## Context
 
@@ -57,10 +58,53 @@ Experience Layer แทน (Dashboard ที่ครอบมองภาพร
 
 ADR นี้เป็นการปรับ **สถาปัตยกรรมเป้าหมาย (target model)** เท่านั้น **ไม่ใช่การประกาศว่าแยกโค้ดเสร็จแล้ว**
 
-- **`dynamic-guard-ai` ยังไม่มีโค้ดสักบรรทัด** — งาน Security/Governance ทั้งหมด (รวมถึง
-  bug วิกฤต `firestore.rules: allow read: if true` และ `getUserRole()` ที่ไม่ verify ID token จริง)
+- **`dynamic-guard-ai` ยังไม่มีโค้ดสักบรรทัด** — งาน Security/Governance ทั้งหมด
   **ยังคงอยู่ใน `dynamic-insight-ai` (App 2) เหมือนเดิมทุกประการ** จนกว่าจะมีการแยก repo จริง
 - `dynamic-plan-ai` และ `dynamic-ops-ai` ก็เช่นกัน — เป็นช่อง (placeholder) ใน Roadmap เท่านั้น
+
+## สถานะบั๊กความปลอดภัยใน App 2 (dynamic-insight-ai) — ตรวจสอบล่าสุด 2026-08-03
+
+ADR ฉบับแรกระบุว่ามีบั๊กวิกฤต 2 จุดคือ `firestore.rules: allow read: if true` และ
+`getUserRole()` ที่ไม่ verify token จริง การตรวจสอบโค้ดจริงเพิ่มเติมพบว่ารายละเอียดคลาดเคลื่อน
+ไปบางส่วน สรุปสถานะจริงดังนี้:
+
+### 1. `firestore.rules: allow read: if true`
+
+- **มีการแก้ไขแล้ว** ในเวอร์ชัน `Dynamic-insight-ai-fixed`: ทุก collection เป็น fail-closed
+  (`allow read: if false` และ default deny)
+- **ข้อค้นพบสำคัญกว่านั้น**: ตรวจสอบด้วยการ grep ทั่วทั้งโปรเจกต์ (`firebase-admin`,
+  `initializeApp`) ไม่พบการเชื่อมต่อ Firestore เลยแม้แต่จุดเดียว **ไม่มี Firebase project อยู่จริง**
+  ข้อมูลทั้งหมดของแอปเก็บเป็น local JSON (`data/*.json`)
+- **สรุป**: `firestore.rules` เป็นไฟล์เตรียมไว้เฉยๆ (dead config) ไม่เคยถูกบังคับใช้กับข้อมูลจริง
+  ที่แอปนี้จัดการอยู่ ความเสี่ยงจากบั๊กนี้จึงไม่เคยมีผลกระทบจริงในทางปฏิบัติ
+
+### 2. `getUserRole()` ไม่ verify token จริง
+
+- **แก้ไปบางส่วนแล้ว** ในเวอร์ชัน fixed:
+  - Fail-closed: ขอ role admin/analyst โดยไม่มี Bearer token ถูกต้อง → demote เป็น viewer ทันที
+  - ปิดช่องโหว่ email spoofing (เดิมเชื่อ header `x-user-email` ตรงๆ ตอนนี้ดึงจาก token
+    ที่ verify แล้วเท่านั้น)
+  - Log unauthorized escalation attempt ทุกครั้ง
+- **ยังไม่สมบูรณ์**:
+  - ยังไม่ใช่ per-user authentication จริง — ใช้ shared secret token ต่อ role (ทุกคนที่เป็น
+    analyst ใช้ token เดียวกัน) มี TODO ในโค้ดระบุว่าต้องย้ายไป Firebase Auth ID token
+    verification แบบ per-user ตาม `SECURITY_MODEL.md` ข้อ 3.1
+  - ถ้า token หลุด จะปลอมเป็นคนในกลุ่ม role นั้นได้ทุกคน และ audit log บันทึก email แบบ
+    hardcode ตาม role ไม่ใช่ตัวคนจริง
+  - ใช้ string comparison ธรรมดา (`.includes()`) ไม่ใช่ constant-time comparison
+    (ความเสี่ยงต่ำ ไม่เร่งด่วน)
+
+### 3. ความเสี่ยงตัวจริงที่ยัง live อยู่
+
+ความเสี่ยงจริงคือ **REST API ผ่าน `getUserRole()`/`authorizeRole()` ใน `server.ts`**
+ไม่ใช่ Firestore rules — priority งานที่เหลือควรโฟกัสจุดนี้แทน
+
+### 4. สถานะ deployment
+
+App นี้**ยังไม่เคย deploy ขึ้น production หรือ public hosting ใดๆ** (ไม่พบ config ของ
+Firebase Hosting, Vercel, Railway, Render, Netlify หรือ Docker ในโปรเจกต์) ปัจจุบันรันบน
+local เครื่องเดียว ผู้ใช้งานคนเดียว จึงยังไม่มีความเสี่ยงเร่งด่วนต่อผู้ใช้ภายนอก ณ ขณะนี้
+อย่างไรก็ตาม ควรแก้ per-user authentication ให้เสร็จก่อน deploy ขึ้น production จริง
 
 ## Alternatives
 
@@ -85,6 +129,8 @@ ADR นี้เป็นการปรับ **สถาปัตยกรร�
 ### สิ่งที่ยังไม่ต้องแก้ (ยังไม่มีผลกระทบจริง)
 
 - โค้ดของ `dynamic-insight-ai` — bug security เดิมยังต้องแก้ในที่เดิม ไม่ต้องรอย้าย repo ก่อน
+- `firestore.rules` — ไม่ต้องเร่งแก้เพิ่ม เพราะไม่ถูกใช้งานจริง (แต่เวอร์ชัน fixed ที่แก้ไว้แล้ว
+  ก็ปลอดภัยดี เก็บไว้ได้)
 
 ## Benefits
 
@@ -97,6 +143,8 @@ ADR นี้เป็นการปรับ **สถาปัตยกรร�
 - ถ้าไม่ระบุสถานะ "ยังไม่มีโค้ด" ให้ชัดในทุกเอกสารที่แก้ตาม อาจทำให้ทีมเข้าใจผิดว่า Security
   bug ถูกแยกจัดการแล้ว ทั้งที่ยังฝังอยู่ใน App 2 เหมือนเดิม — **ต้องย้ำ status นี้ทุกจุดที่อ้างถึง
   dynamic-guard-ai**
+- ถ้าไม่ระบุสถานะ per-user auth ที่ยังไม่สมบูรณ์ให้ชัด อาจทำให้เข้าใจผิดว่า security scope
+  ของ App 2 "เสร็จสมบูรณ์แล้ว" ทั้งที่ยังมี known issue ค้างอยู่ (shared-secret-per-role)
 - Command Center ในฐานะ Experience Layer อาจไม่ใช่คำตอบสุดท้าย ถ้า scope โตขึ้นในอนาคต
 
 ## References
@@ -106,6 +154,7 @@ ADR นี้เป็นการปรับ **สถาปัตยกรร�
 - LOGICAL_ARCHITECTURE.md
 - DEPLOYMENT_ARCHITECTURE.md (Known Documentation Gaps)
 - CLOUDFORGE_CONSTITUTION.md ข้อ 8 (Architecture Decision Rule)
+- SECURITY_MODEL.md ข้อ 3.1 (per-user authentication requirement)
 
 ---
 
