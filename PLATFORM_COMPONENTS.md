@@ -30,19 +30,31 @@
 | หัวข้อ | รายละเอียด |
 |---|---|
 | **หน้าที่หลัก** | วิเคราะห์ข้อมูลที่ App 1 สกัดมา *(ขอบเขต Security & Data Governance เดิมกำลังทยอยย้ายไป `dynamic-guard-ai` ตาม ADR-0009 — ดูหมายเหตุด้านบน)* |
-| **Input** | ข้อมูลจาก `extracted_data` |
-| **Output** | ผลวิเคราะห์ + `analysis_audit_log` (บันทึกทุกการกระทำ) |
+| **Input** | ข้อมูลจากขั้นตอนสกัดของ App 1 — ปัจจุบันเก็บเป็น local JSON (`data/*.json`) บนเครื่อง ไม่ใช่ Firestore (ดูหมายเหตุในข้อ 4) |
+| **Output** | ผลวิเคราะห์ + audit log (บันทึกทุกการกระทำ) |
 | **ผู้ใช้งาน** | ทีม implement, ทีมตรวจสอบความปลอดภัย |
 | **Sub-components** | Prompt Injection Test, Cost Guard/Token Guardrails, PDPA Cascade Console, Secret Scanning, Audit Trail Log (filter ตาม phase/category/batch/confidence) — *sub-components เหล่านี้คือของที่จะย้ายไป `dynamic-guard-ai` ในอนาคต ตอนนี้ยังรันอยู่ใน repo นี้* |
-| **สถานะ** | อยู่ระหว่างแก้ security bug — ดูรายละเอียดที่ `docs/security/` |
+| **สถานะ** | ตรวจสอบและแก้ไข security bug รอบแรกเสร็จแล้ว (เวอร์ชัน fixed) ยังมี known issue ค้างอยู่ 1 จุด — ดูรายละเอียดด้านล่าง ยังไม่เคย deploy ขึ้น production จริง (รันบน local คนเดียว) |
 | **เชื่อมต่อกับ** | รับข้อมูลจาก App 1, ให้ App 3 อ่านสถานะแบบ read-only |
 
-### รายการ bug ที่ยังไม่แก้ (อ้างอิงจาก Sprint ก่อนหน้า)
-1. 🔴 `firestore.rules`: `allow read: if true` เปิด public บน `extracted_data` และ
-   `analysis_audit_log` — ต้องแก้เป็น `if false`
-2. 🔴 `server.ts`: ยังไม่ต่อ Firestore จริง (`recordsStore`/`auditLogsStore` เป็น
-   in-memory array), ยังไม่มี Firebase Auth จริง (`getUserRole()` เชื่อ header ที่ปลอมได้)
+### สถานะ bug ความปลอดภัย — ตรวจสอบล่าสุด 2026-08-03
+
+1. ✅ **`firestore.rules`: `allow read: if true`** — แก้เป็น fail-closed แล้วในเวอร์ชัน fixed
+   (`allow read: if false` ทุก collection ที่สำคัญ + default deny) **และตรวจยืนยันเพิ่มเติมว่า
+   โปรเจกต์นี้ไม่มีการเชื่อมต่อ Firestore เลยแม้แต่จุดเดียว** (ไม่พบ `firebase-admin` หรือ
+   `initializeApp` ทั่วทั้งโปรเจกต์) ไม่มี Firebase project อยู่จริง — ไฟล์ `firestore.rules`
+   จึงเป็นไฟล์เตรียมไว้เฉยๆ ไม่เคยถูกบังคับใช้กับข้อมูลจริง
+2. 🟡 **`getUserRole()` ไม่ verify token จริง** — แก้ไปบางส่วนแล้วในเวอร์ชัน fixed: fail-closed
+   เมื่อไม่มี token ที่ถูกต้อง, ปิดช่องโหว่ header spoofing (ไม่เชื่อ `x-user-email` ตรงๆ อีกต่อไป
+   ดึงจาก token ที่ verify แล้วเท่านั้น), log ความพยายาม escalate สิทธิ์ผิดปกติทุกครั้ง
+   **แต่ยังไม่สมบูรณ์** — ยังใช้ shared secret token ต่อ role (ไม่ใช่ per-user authentication)
+   ถ้า token หลุด จะปลอมเป็นคนในกลุ่ม role นั้นได้ทุกคน ต้องย้ายไป Firebase Auth ID token
+   verification แบบ per-user ตาม `SECURITY_MODEL.md` ข้อ 3.1 (ยังไม่ทำ)
 3. 🟡 บั๊ก UI: ตัวเลข "Records" ที่หัวแอปผูกกับผลลัพธ์หลัง filter แทนที่จะโชว์จำนวนทั้งหมดจริง
+   (ยังไม่แก้ ความเสี่ยงต่ำ ไม่เร่งด่วน)
+
+ดูรายละเอียดเต็มที่ `docs/adr/ADR-0009-five-studio-application-model.md` (ส่วน "สถานะบั๊กความ
+ปลอดภัยใน App 2")
 
 ---
 
@@ -83,11 +95,18 @@
 
 ---
 
+## 4. Data Layer
+
+> **หมายเหตุ (ตรวจสอบ 2026-08-03):** ตารางด้านล่างนี้คือ **target design** ตามสถาปัตยกรรม
+> ที่วางแผนไว้ **ไม่ใช่สถานะจริงของ `dynamic-insight-ai` ในปัจจุบัน** — ตรวจสอบโค้ดจริงแล้วพบว่า
+> โปรเจกต์นี้ไม่มีการเชื่อมต่อ Firestore เลย (ไม่มี Firebase project) ข้อมูลทั้งหมดเก็บเป็น
+> local JSON บนเครื่อง (`data/*.json`) การต่อ Firestore จริงตาม design นี้ยังไม่ได้เริ่ม
+
 | หัวข้อ | รายละเอียด |
 |---|---|
 | **หน้าที่** | เก็บข้อมูลจริงของแต่ละ tenant |
-| **Collections หลัก** | `extracted_data`, `analysis_audit_log`, (จะเพิ่ม `governance_metrics` เมื่อ persist จริง) |
-| **การเข้าถึง** | ผ่าน backend (Firebase Admin SDK) เท่านั้น ห้าม client เข้าถึงตรง |
+| **Collections หลัก (ตามแผน)** | `extracted_data`, `analysis_audit_log`, (จะเพิ่ม `governance_metrics` เมื่อ persist จริง) |
+| **การเข้าถึง (ตามแผน)** | ผ่าน backend (Firebase Admin SDK) เท่านั้น ห้าม client เข้าถึงตรง |
 | **Isolation** | แยกต่อ tenant (รูปแบบยังไม่ตัดสินใจสุดท้าย — ดู `ENTERPRISE_ARCHITECTURE.md` หัวข้อ "Tenant Isolation Model") |
 
 ---
@@ -97,8 +116,8 @@
 | หัวข้อ | รายละเอียด |
 |---|---|
 | **หน้าที่** | ยืนยันตัวตนผู้ใช้และออก ID token ที่ backend ใช้ verify สิทธิ์ |
-| **สถานะปัจจุบัน** | ยังไม่ถูกใช้จริงใน App 2 — `getUserRole()` ยังเชื่อ header ที่ client กำหนดเอง |
-| **เป้าหมาย** | ทุก endpoint ที่แก้ไข/อ่านข้อมูลสำคัญต้อง verify ID token ก่อนเสมอ |
+| **สถานะปัจจุบัน** | ยังไม่ได้ใช้ Firebase Auth จริงใน App 2 — `getUserRole()` เวอร์ชัน fixed แก้ไม่ให้เชื่อ header ที่ client ปลอมได้แล้ว (ดึงจาก token ที่ verify แล้วเท่านั้น) แต่ token ที่ใช้ยังเป็น shared secret ต่อ role ไม่ใช่ per-user token จาก Firebase Auth ยังไม่มี Firebase project สำหรับ Auth อยู่จริง |
+| **เป้าหมาย** | ทุก endpoint ที่แก้ไข/อ่านข้อมูลสำคัญต้อง verify ID token ก่อนเสมอ แบบ per-user ตาม `SECURITY_MODEL.md` ข้อ 3.1 |
 
 ---
 

@@ -47,7 +47,7 @@ Studio ในเครือ (Ingest, Insight, Simulation, Deployment & Operatio
   ไปสู่ Enterprise Release ที่รองรับ Multi-Cloud, Multi-Region, และ Marketplace ต่างๆ
 
 ดูรายละเอียด version-by-version ที่ `ROADMAP.md` และดูสถานะ Studio จริง ณ ปัจจุบันที่
-`docs/architecture/PLATFORM_COMPONENTS.md` (ตาม ADR-0009)
+`PLATFORM_COMPONENTS.md` (ตาม ADR-0009)
 
 ## 5. What This Vision Is Not
 

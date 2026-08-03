@@ -54,7 +54,7 @@ https://github.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/issues
 # 4. หัวข้อ Issue ที่แนะนำให้ระบุ
 
 - Title สั้น ชัดเจน บอกปัญหา/คำถามได้ในบรรทัดเดียว
-- ไฟล์/ส่วนของเอกสารที่เกี่ยวข้อง (ระบุ path เช่น `docs/architecture/PLATFORM_COMPONENTS.md`)
+- ไฟล์/ส่วนของเอกสารที่เกี่ยวข้อง (ระบุ path เช่น `PLATFORM_COMPONENTS.md`)
 - สิ่งที่คาดหวัง vs สิ่งที่เจอจริง (ถ้าเป็นการรายงานปัญหา)
 
 ดูรูปแบบ commit/PR เพิ่มเติมได้ที่ `CONTRIBUTING.md`
