@@ -1,0 +1,19 @@
+# Global owners
+* @cloudforge-architecture-board
+
+# Architecture decisions
+docs/adr/ @cloudforge-architecture-board
+
+# Security policies and standards
+docs/security/ @cloudforge-security-board
+policies/security/ @cloudforge-security-board
+
+# Schemas and data models
+schemas/ @cloudforge-architecture-board @cloudforge-data-team
+
+# Engineering standards
+docs/standards/ @cloudforge-engineering-board
+scripts/ @cloudforge-engineering-board
+
+# GitHub configuration
+.github/ @cloudforge-platform-team

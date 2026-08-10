@@ -1,395 +1,112 @@
-CloudForge-Platform-Foundation/
-│
-├── README.md
-├── MASTER_INDEX.md   ← สร้างไฟล์นี้
-├── CHANGELOG.md
-├── ROADMAP.md
-├── VERSION
-├── LICENSE
-│
-├── docs/
-│
-└── .github/
-# MASTER INDEX
+# Master Index
 
-> **CloudForge Platform Foundation Documentation Index**
-
-This document serves as the **central navigation hub** for all documentation within the CloudForge Platform Foundation repository.
-
-Every official document should be discoverable through this index.
+> Central navigation hub for all CloudForge Platform Foundation documentation.
 
 ---
 
-# Repository Information
+## 📚 Documentation Map
 
-| Item                | Value                          |
-| ------------------- | ------------------------------ |
-| Repository          | CloudForge Platform Foundation |
-| Repository Type     | Enterprise Platform Foundation |
-| Purpose             | Single Source of Truth (SSOT)  |
-| Status              | Active Development             |
-| Current Version     | See `VERSION`                  |
-| Documentation Owner | CloudForge Architecture Team   |
+### Getting Started
+| Document | Status | Description |
+|----------|--------|-------------|
+| [README.md](README.md) | ✅ Approved | Repository overview |
+| [docs/getting-started.md](docs/getting-started.md) | ✅ Approved | Onboarding guide for new contributors |
+
+### Architecture
+| Document | Status | Description |
+|----------|--------|-------------|
+| [docs/architecture/platform-architecture.md](docs/architecture/platform-architecture.md) | 🔄 Draft | Enterprise architecture blueprint |
+
+### Governance
+| Document | Status | Description |
+|----------|--------|-------------|
+| [docs/governance/governance-model.md](docs/governance/governance-model.md) | 🔄 Draft | Governance model and review process |
+
+### Security
+| Document | Status | Description |
+|----------|--------|-------------|
+| [docs/security/security-baseline.md](docs/security/security-baseline.md) | 🔄 Draft | Security baseline and hardening guide |
+
+### Standards
+| Document | Status | Description |
+|----------|--------|-------------|
+| [docs/standards/engineering-standards.md](docs/standards/engineering-standards.md) | 🔄 Draft | Coding and development standards |
+| [docs/standards/api-standards.md](docs/standards/api-standards.md) | 🔄 Draft | API design guidelines |
+| [docs/standards/naming-conventions.md](docs/standards/naming-conventions.md) | 🔄 Draft | Naming conventions across all repos |
+
+### Data Model
+| Document | Status | Description |
+|----------|--------|-------------|
+| [docs/data-model/canonical-data-model.md](docs/data-model/canonical-data-model.md) | 🔄 Draft | Canonical data model specification |
+| [schemas/canonical/entity.schema.json](schemas/canonical/entity.schema.json) | ✅ Approved | Base entity schema |
+| [schemas/canonical/event.schema.json](schemas/canonical/event.schema.json) | ✅ Approved | Base event schema |
+
+### AI Agents
+| Document | Status | Description |
+|----------|--------|-------------|
+| [docs/agents/ai-agent-specifications.md](docs/agents/ai-agent-specifications.md) | 🔄 Draft | AI agent specifications |
+
+### Architecture Decision Records (ADR)
+| ADR | Status | Title |
+|-----|--------|-------|
+| [ADR-001](docs/adr/001-multi-repo-vs-mono-repo.md) | ✅ Approved | Multi-Repo vs Mono-Repo Architecture |
+| [ADR-002](docs/adr/002-json-schema-for-canonical-model.md) | ✅ Approved | JSON Schema for Canonical Data Model |
+| [ADR-003](docs/adr/003-three-tier-governance.md) | ✅ Approved | Three-Tier Governance Model |
 
 ---
 
-# Documentation Structure
+## 🗂️ Repository Structure
 
-```text
+```
 CloudForge-Platform-Foundation
 │
-├── README.md
-├── MASTER_INDEX.md
-├── ROADMAP.md
-├── CHANGELOG.md
-├── VERSION
-├── LICENSE
-├── CONTRIBUTING.md
-├── SECURITY.md
-├── SUPPORT.md
-├── CODE_OF_CONDUCT.md
+├── README.md                 # Entry point
+├── MASTER_INDEX.md           # This file — navigation hub
+├── CONTRIBUTING.md           # Contribution guidelines
+├── SECURITY.md               # Security policy
+├── CHANGELOG.md              # Release history
+├── ROADMAP.md                # Future plans
+├── VERSION                   # Current version
 │
-├── docs/
+├── docs/                     # Documentation
+│   ├── getting-started.md
 │   ├── architecture/
-│   ├── vision/
 │   ├── governance/
 │   ├── security/
 │   ├── standards/
-│   ├── api/
 │   ├── data-model/
 │   ├── agents/
 │   └── adr/
 │
-└── .github/
+├── schemas/                  # Machine-readable standards
+│   ├── canonical/
+│   └── api/
+│
+├── policies/                 # Enforceable policies
+│   ├── security/
+│   └── naming/
+│
+├── templates/                # Reusable templates
+│   ├── studio-template/
+│   └── adr-template.md
+│
+├── examples/                 # Reference implementations
+│
+├── scripts/                  # Validation scripts
+│
+└── .github/                  # GitHub configuration
+    ├── workflows/
+    ├── ISSUE_TEMPLATE/
+    ├── CODEOWNERS
+    └── PULL_REQUEST_TEMPLATE.md
 ```
 
 ---
 
-# Root Documents
+## 🏷️ Version Compatibility
 
-| Document           | Purpose              | Status |
-| ------------------ | -------------------- | ------ |
-| README.md          | Platform Overview    | ✅      |
-| MASTER_INDEX.md    | Documentation Index  | ✅      |
-| ROADMAP.md         | Development Roadmap  | ⏳      |
-| CHANGELOG.md       | Release History      | ⏳      |
-| VERSION            | Current Version      | ⏳      |
-| LICENSE            | License Information  | ✅      |
-| CONTRIBUTING.md    | Contribution Guide   | ⏳      |
-| SECURITY.md        | Security Policy      | ⏳      |
-| SUPPORT.md         | Support Information  | ✅      |
-| CODE_OF_CONDUCT.md | Community Guidelines | ⏳      |
+| Foundation Version | Compatible Studio Versions |
+|-------------------|---------------------------|
+| v0.1.0 | Studio >= v0.1.0 |
 
----
-
-# Documentation Categories
-
-## Platform Vision
-
-**Location**
-
-```text
-docs/vision/
-```
-
-Contents
-
-* Platform Vision
-* Mission
-* Goals
-* Strategic Direction
-
----
-
-## Enterprise Architecture
-
-**Location**
-
-```text
-docs/architecture/
-```
-
-Contents
-
-* High-Level Architecture
-* Logical Architecture
-* Physical Architecture
-* Deployment Architecture
-* Data Flow
-* Integration Architecture
-* Reference Architecture
-
----
-
-## Governance
-
-**Location**
-
-```text
-docs/governance/
-```
-
-Contents
-
-* Governance Framework
-* Review Process
-* Decision Process
-* Standards Compliance
-
----
-
-## Security
-
-**Location**
-
-```text
-docs/security/
-```
-
-Contents
-
-* Security Architecture
-* Zero Trust
-* Identity
-* Encryption
-* Secrets Management
-* Security Controls
-
----
-
-## Engineering Standards
-
-**Location**
-
-```text
-docs/standards/
-```
-
-Contents
-
-* Coding Standards
-* Documentation Standards
-* Naming Conventions
-* Versioning Standards
-* Repository Standards
-
----
-
-## API Standards
-
-**Location**
-
-```text
-docs/api/
-```
-
-Contents
-
-* API Guidelines
-* REST Standards
-* Error Handling
-* Authentication
-* Versioning
-
----
-
-## Canonical Data Model
-
-**Location**
-
-```text
-docs/data-model/
-```
-
-Contents
-
-* Shared Schemas
-* Canonical Models
-* Entity Definitions
-* Naming Standards
-
----
-
-## AI Agent Specifications
-
-**Location**
-
-```text
-docs/agents/
-```
-
-Contents
-
-* Agent Specifications
-* Agent Responsibilities
-* Agent Interfaces
-* Collaboration Model
-
----
-
-## Architecture Decision Records
-
-**Location**
-
-```text
-docs/adr/
-```
-
-Contents
-
-* ADR-0001
-* ADR-0002
-* ADR-0003
-* Future ADRs
-
----
-
-# Documentation Lifecycle
-
-```text
-Vision
-   │
-   ▼
-Architecture
-   │
-   ▼
-Standards
-   │
-   ▼
-Implementation
-   │
-   ▼
-Validation
-   │
-   ▼
-Release
-   │
-   ▼
-Maintenance
-```
-
----
-
-# Repository Lifecycle
-
-```text
-Initialize Repository
-        │
-        ▼
-Architecture Definition
-        │
-        ▼
-Documentation
-        │
-        ▼
-Implementation
-        │
-        ▼
-Validation
-        │
-        ▼
-Release
-        │
-        ▼
-Continuous Improvement
-```
-
----
-
-# Documentation Principles
-
-Every document in CloudForge should follow these principles.
-
-* Single Source of Truth
-* Documentation First
-* Version Controlled
-* Architecture Driven
-* Security by Default
-* Consistent Structure
-* Review Before Release
-* Continuously Maintained
-
----
-
-# Release Documentation Checklist
-
-Every release should include:
-
-* README Updated
-* MASTER_INDEX Updated
-* CHANGELOG Updated
-* ROADMAP Reviewed
-* VERSION Updated
-* ADR Updated (if required)
-* Documentation Validated
-
----
-
-# Future Documentation
-
-The following documentation will be added as the platform evolves.
-
-* Platform Services
-* AI Gateway
-* Knowledge Repository
-* Identity and Access Management
-* Workflow Engine
-* Event Architecture
-* Reference Implementations
-* Platform SDK
-* Enterprise Deployment Guides
-
----
-
-# Quick Navigation
-
-```text
-README
-    │
-    ▼
-MASTER INDEX
-    │
-    ├── Vision
-    ├── Architecture
-    ├── Governance
-    ├── Security
-    ├── Standards
-    ├── API
-    ├── Data Model
-    ├── AI Agents
-    └── ADR
-```
-
----
-
-# Document Status Legend
-
-| Symbol | Meaning      |
-| ------ | ------------ |
-| ✅      | Complete     |
-| 🚧     | In Progress  |
-| ⏳      | Planned      |
-| 🔄     | Under Review |
-| 📦     | Released     |
-
----
-
-# Maintenance Policy
-
-The MASTER_INDEX must be updated whenever:
-
-* A new document is added
-* A document is renamed
-* A directory is created
-* A release is published
-* Repository structure changes
-
-Failure to update this index may result in inconsistent documentation.
-
----
-
-# Final Note
-
-The **MASTER_INDEX.md** is the authoritative navigation document for the CloudForge Platform Foundation repository.
-
-All documentation should be organized, maintained, and referenced through this index to ensure consistency, discoverability, and long-term maintainability.
+See [CHANGELOG.md](CHANGELOG.md) for breaking changes and migration guides.

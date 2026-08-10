@@ -1,0 +1,44 @@
+name: Validate Against Foundation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  foundation-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Studio
+        uses: actions/checkout@v4
+
+      - name: Checkout Foundation
+        uses: actions/checkout@v4
+        with:
+          repository: niphan1000-cyber1000/CloudForge-Platform-Foundation
+          path: foundation
+
+      - name: Setup validation tools
+        run: |
+          npm install -g ajv-cli
+
+      - name: Run Foundation Validation
+        run: |
+          bash foundation/scripts/validate.sh .
+
+      - name: Validate Against Canonical Schemas
+        run: |
+          # Example: Validate your data models against canonical schemas
+          # for schema in src/schemas/*.json; do
+          #   ajv validate -s foundation/schemas/canonical/entity.schema.json -d "$schema"
+          # done
+          echo "Add your schema validation here"
+
+      - name: Security Scan
+        run: |
+          echo "Run security scanning tools here"
+          # Examples:
+          # - npm audit
+          # - trivy filesystem .
+          # - checkov -d .

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudforge.io/schemas/canonical/v1/event.schema.json",
+  "title": "Base Event",
+  "description": "Canonical event schema for all CloudForge domain events.",
+  "type": "object",
+  "required": ["eventId", "eventType", "source", "timestamp", "payload"],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique identifier for this event occurrence."
+    },
+    "eventType": {
+      "type": "string",
+      "pattern": "^[A-Z][a-zA-Z0-9]+\.(Created|Updated|Deleted|Action|Failed)$",
+      "description": "Event type in format Domain.Action. Examples: User.Created, Task.Updated",
+      "examples": ["User.Created", "Project.Updated", "Resource.Deleted"]
+    },
+    "source": {
+      "type": "string",
+      "description": "Name of the service/studio that emitted the event.",
+      "examples": ["ingest-studio", "nova-studio", "security-studio"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred."
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID to correlate related events across services."
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the event that caused this event (if applicable)."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific payload. Must extend base entity schema where applicable."
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^v\d+\.\d+$",
+          "description": "Version of the schema used for this event.",
+          "examples": ["v1.0", "v2.1"]
+        },
+        "traceId": {
+          "type": "string",
+          "description": "Distributed tracing ID."
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

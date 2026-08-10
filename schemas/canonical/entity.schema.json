@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudforge.io/schemas/canonical/v1/entity.schema.json",
+  "title": "Base Entity",
+  "description": "Canonical base entity that all CloudForge domain entities must extend.",
+  "type": "object",
+  "required": ["id", "entityType", "createdAt", "updatedAt", "version"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique identifier for the entity."
+    },
+    "entityType": {
+      "type": "string",
+      "description": "Discriminator for the entity type.",
+      "examples": ["User", "Project", "Resource", "Task"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the entity was created."
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the entity was last updated."
+    },
+    "createdBy": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the user/system that created the entity."
+    },
+    "updatedBy": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the user/system that last updated the entity."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Optimistic locking version number."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata key-value pairs.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$",
+        "maxLength": 50
+      },
+      "description": "Tags for categorization. Lowercase kebab-case only."
+    }
+  },
+  "additionalProperties": true
+}

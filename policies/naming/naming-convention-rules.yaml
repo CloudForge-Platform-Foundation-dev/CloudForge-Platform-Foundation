@@ -1,0 +1,84 @@
+# CloudForge Naming Convention Rules
+# Used by validation scripts and linters
+
+repositories:
+  pattern: "^cloudforge-[a-z0-9-]+-(studio|service|lib)$"
+  examples:
+    - cloudforge-ingest-studio
+    - cloudforge-nova-studio
+    - cloudforge-security-service
+    - cloudforge-shared-lib
+
+branches:
+  protected:
+    - main
+    - develop
+  patterns:
+    feature: "^feature/[a-z0-9-]+$"
+    fix: "^fix/[a-z0-9-]+$"
+    hotfix: "^hotfix/[a-z0-9-]+$"
+    release: "^release/v\d+\.\d+\.\d+$"
+    docs: "^docs/[a-z0-9-]+$"
+  examples:
+    - feature/user-authentication
+    - fix/memory-leak
+    - release/v1.2.0
+    - docs/api-guidelines
+
+commits:
+  pattern: "^(feat|fix|docs|style|refactor|test|chore|security)(\([a-z-]+\))?!?: .+"
+  max_length: 72
+  examples:
+    - "feat(ingest): add CSV parser"
+    - "fix(api): resolve null pointer exception"
+    - "docs: update architecture diagram"
+    - "security(auth): enforce MFA"
+  types:
+    - feat
+    - fix
+    - docs
+    - style
+    - refactor
+    - test
+    - chore
+    - security
+
+files:
+  schemas:
+    pattern: "^[a-z0-9-]+\.schema\.json$"
+    examples:
+      - entity.schema.json
+      - user-profile.schema.json
+
+  adr:
+    pattern: "^\d{3}-[a-z0-9-]+\.md$"
+    examples:
+      - 001-multi-repo-vs-mono-repo.md
+      - 042-api-gateway-selection.md
+
+  docs:
+    pattern: "^[a-z0-9-]+\.md$"
+    examples:
+      - getting-started.md
+      - security-baseline.md
+
+services:
+  pattern: "^[a-z0-9-]+$"
+  examples:
+    - ingest-service
+    - nova-api
+    - security-scanner
+
+environments:
+  allowed:
+    - development
+    - staging
+    - production
+
+tags:
+  pattern: "^[a-z0-9-]+$"
+  max_length: 50
+  examples:
+    - high-priority
+    - data-ingestion
+    - security-patch

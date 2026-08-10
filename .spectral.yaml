@@ -1,0 +1,28 @@
+extends: ["spectral:oas", "spectral:asyncapi"]
+
+rules:
+  # Enforce CloudForge API standards
+  operation-operationId: error
+  operation-description: warn
+  operation-tags: error
+  info-contact: warn
+  info-license: warn
+
+  # Custom CloudForge rules
+  cloudforge-security-schemes:
+    description: API must define security schemes
+    given: "$.components"
+    then:
+      field: securitySchemes
+      function: truthy
+    severity: error
+
+  cloudforge-error-responses:
+    description: API should define common error responses
+    given: "$.components.responses"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          required: ["BadRequest", "Unauthorized", "NotFound", "InternalError"]
+    severity: warn
