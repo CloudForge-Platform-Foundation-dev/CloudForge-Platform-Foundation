@@ -27,7 +27,7 @@ jobs:
           echo "Validating canonical schemas..."
           for schema in schemas/canonical/*.schema.json; do
             echo "Checking $schema"
-            ajv compile -s "$schema" --strict
+            ajv compile -s "$schema" --spec=draft2020 --strict
           done
 
       - name: Validate OpenAPI Specs

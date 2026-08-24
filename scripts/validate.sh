@@ -125,7 +125,7 @@ check_schemas() {
     if [ -d "$TARGET_DIR/schemas/canonical" ]; then
         for schema in "$TARGET_DIR"/schemas/canonical/*.schema.json; do
             if [ -f "$schema" ]; then
-                if ajv compile -s "$schema" --strict > /dev/null 2>&1; then
+                if ajv compile -s "$schema" --spec=draft2020 --strict > /dev/null 2>&1; then
                     echo -e "${GREEN}✅${NC} Valid schema: $(basename "$schema")"
                 else
                     echo -e "${RED}❌${NC} Invalid schema: $(basename "$schema")"
