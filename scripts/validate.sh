@@ -3,7 +3,7 @@
 # Usage: ./scripts/validate.sh [target-directory]
 # If no target directory provided, validates current repo
 
-set -e
+set -euo pipefail
 
 TARGET_DIR="${1:-.}"
 ERRORS=0
@@ -104,7 +104,7 @@ check_naming() {
                     echo -e "${YELLOW}⚠️${NC}  Schema naming warning: $basename_file"
                 fi
             fi
-        done 2>/dev/null || true
+        done 2>/dev/null
     fi
 
     echo ""

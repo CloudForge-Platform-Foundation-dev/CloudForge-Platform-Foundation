@@ -33,7 +33,7 @@ jobs:
       - name: Validate OpenAPI Specs
         run: |
           echo "Validating API templates..."
-          spectral lint schemas/api/*.yaml --ruleset .spectral.yaml || true
+          spectral lint schemas/api/*.yaml --ruleset .spectral.yaml
 
       - name: Check Naming Conventions
         run: |
