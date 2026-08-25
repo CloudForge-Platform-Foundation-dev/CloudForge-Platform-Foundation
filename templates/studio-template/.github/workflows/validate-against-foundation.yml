@@ -18,14 +18,20 @@ jobs:
         with:
           repository: niphan1000-cyber1000/CloudForge-Platform-Foundation
           path: foundation
+          # CloudForge-Platform-Foundation is a private repo, so the default
+          # GITHUB_TOKEN (scoped only to this repo) cannot check it out.
+          # Each Studio repo must add a fine-grained PAT with read-only
+          # 'contents' access to CloudForge-Platform-Foundation as a repo
+          # secret named FOUNDATION_PAT.
+          token: ${{ secrets.FOUNDATION_PAT }}
 
       - name: Setup validation tools
         run: |
           npm install -g ajv-cli ajv-formats
 
-      - name: Run Foundation Validation
+      - name: Run Studio Contract Validation
         run: |
-          bash foundation/scripts/validate.sh .
+          bash foundation/scripts/validate-studio.sh .
 
       - name: Validate Against Canonical Schemas
         run: |
