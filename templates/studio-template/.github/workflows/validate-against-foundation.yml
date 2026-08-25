@@ -21,7 +21,7 @@ jobs:
 
       - name: Setup validation tools
         run: |
-          npm install -g ajv-cli
+          npm install -g ajv-cli ajv-formats
 
       - name: Run Foundation Validation
         run: |
@@ -29,16 +29,44 @@ jobs:
 
       - name: Validate Against Canonical Schemas
         run: |
-          # Example: Validate your data models against canonical schemas
-          # for schema in src/schemas/*.json; do
-          #   ajv validate -s foundation/schemas/canonical/entity.schema.json -d "$schema"
-          # done
-          echo "Add your schema validation here"
+          set -euo pipefail
+          if [ ! -d "src/schemas" ]; then
+            echo "No src/schemas/ directory found in this Studio yet — nothing to validate."
+            exit 0
+          fi
+          shopt -s nullglob
+          schema_files=(src/schemas/*.json)
+          if [ ${#schema_files[@]} -eq 0 ]; then
+            echo "src/schemas/ exists but contains no .json files — nothing to validate."
+            exit 0
+          fi
+          failed=0
+          for schema in "${schema_files[@]}"; do
+            echo "Checking $schema"
+            # --spec=draft2020 and -c ajv-formats mirror the Foundation repo's own
+            # canonical schema checks (see scripts/validate.sh), so a Studio schema
+            # is held to the same bar as the canonical schemas it's meant to extend.
+            # If a schema $refs a canonical schema under foundation/schemas/canonical/,
+            # ajv resolves that $ref for real here too — a broken or missing $ref
+            # fails this step instead of silently compiling around it.
+            if ajv compile -s "$schema" --spec=draft2020 -c ajv-formats --strict; then
+              echo "✅ Valid: $schema"
+            else
+              echo "❌ Invalid: $schema"
+              failed=1
+            fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "One or more Studio schemas failed validation."
+            exit 1
+          fi
 
-      - name: Security Scan
-        run: |
-          echo "Run security scanning tools here"
-          # Examples:
-          # - npm audit
-          # - trivy filesystem .
-          # - checkov -d .
+      - name: Security Scan (Trivy)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: table
+          severity: "CRITICAL,HIGH"
+          ignore-unfixed: true
+          exit-code: "1"
