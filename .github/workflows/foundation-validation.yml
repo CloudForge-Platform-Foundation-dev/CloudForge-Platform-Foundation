@@ -87,7 +87,7 @@ jobs:
         run: |
           echo "Checking ADR files..."
           for adr in docs/adr/*.md; do
-            if [ -f "$adr" ]; then
+            if [ -f "$adr" ] && [ "$(basename "$adr")" != "README.md" ]; then
               if ! grep -q "## Status" "$adr"; then
                 echo "❌ ADR missing Status section: $adr"
                 exit 1
