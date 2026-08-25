@@ -13,7 +13,7 @@
     },
     "eventType": {
       "type": "string",
-      "pattern": "^[A-Z][a-zA-Z0-9]+\.(Created|Updated|Deleted|Action|Failed)$",
+      "pattern": "^[A-Z][a-zA-Z0-9]+\\.(Created|Updated|Deleted|Action|Failed)$",
       "description": "Event type in format Domain.Action. Examples: User.Created, Task.Updated",
       "examples": ["User.Created", "Project.Updated", "Resource.Deleted"]
     },
@@ -46,7 +46,7 @@
       "properties": {
         "schemaVersion": {
           "type": "string",
-          "pattern": "^v\d+\.\d+$",
+          "pattern": "^v\\d+\\.\\d+$",
           "description": "Version of the schema used for this event.",
           "examples": ["v1.0", "v2.1"]
         },

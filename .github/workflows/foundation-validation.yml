@@ -20,20 +20,20 @@ jobs:
 
       - name: Install validation tools
         run: |
-          npm install -g @stoplight/spectral-cli ajv-cli
+          npm install -g @stoplight/spectral-cli ajv-cli ajv-formats
 
       - name: Validate JSON Schemas
         run: |
           echo "Validating canonical schemas..."
           for schema in schemas/canonical/*.schema.json; do
             echo "Checking $schema"
-            ajv compile -s "$schema" --strict
+            ajv compile -s "$schema" --spec=draft2020 -c ajv-formats --strict
           done
 
       - name: Validate OpenAPI Specs
         run: |
           echo "Validating API templates..."
-          spectral lint schemas/api/*.yaml --ruleset .spectral.yaml || true
+          spectral lint schemas/api/*.yaml --ruleset .spectral.yaml
 
       - name: Check Naming Conventions
         run: |
@@ -87,7 +87,7 @@ jobs:
         run: |
           echo "Checking ADR files..."
           for adr in docs/adr/*.md; do
-            if [ -f "$adr" ]; then
+            if [ -f "$adr" ] && [ "$(basename "$adr")" != "README.md" ]; then
               if ! grep -q "## Status" "$adr"; then
                 echo "❌ ADR missing Status section: $adr"
                 exit 1

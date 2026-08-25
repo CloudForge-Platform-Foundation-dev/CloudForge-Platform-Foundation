@@ -19,10 +19,10 @@ servers:
 components:
   schemas:
     BaseEntity:
-      $ref: "https://raw.githubusercontent.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/main/schemas/canonical/entity.schema.json"
+      $ref: "../canonical/entity.schema.json"
 
     BaseEvent:
-      $ref: "https://raw.githubusercontent.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/main/schemas/canonical/event.schema.json"
+      $ref: "../canonical/event.schema.json"
 
     ErrorResponse:
       type: object
@@ -159,6 +159,7 @@ tags:
 paths:
   /health:
     get:
+      operationId: getHealth
       tags:
         - Health
       summary: Health check
