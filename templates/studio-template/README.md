@@ -17,7 +17,7 @@ cd cloudforge-{studio-name}-studio
 npm install  # or pip install, etc.
 
 # Run validation
-../CloudForge-Platform-Foundation/scripts/validate.sh .
+../CloudForge-Platform-Foundation/scripts/validate-studio.sh .
 
 # Start development
 npm run dev
