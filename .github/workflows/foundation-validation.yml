@@ -7,8 +7,104 @@ on:
     branches: [main, develop]
 
 jobs:
-  validate:
+  # -----------------------------------------------------------------
+  # SMART GATE: detect whether this PR/push touches the governed scope.
+  # Governed scope (must ALWAYS trigger full validation):
+  #   schemas/**, policies/**, templates/**, .spectral.yaml,
+  #   scripts/**, .github/workflows/**, docs/adr/**
+  # -----------------------------------------------------------------
+  changes:
+    name: Detect Governed Scope
     runs-on: ubuntu-latest
+    outputs:
+      governed: ${{ steps.filter.outputs.governed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Path filter
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            governed:
+              - 'schemas/**'
+              - 'policies/**'
+              - 'templates/**'
+              - '.spectral.yaml'
+              - 'scripts/**'
+              - '.github/workflows/**'
+              - 'docs/adr/**'
+
+  # -----------------------------------------------------------------
+  # HARD GATE: cheap repo-hygiene checks. Runs unconditionally on
+  # every push and every pull_request. No `if:` on this job.
+  # -----------------------------------------------------------------
+  hard-gate:
+    name: Hard Gate
+    runs-on: ubuntu-latest
+    needs: changes
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Required Files
+        run: |
+          echo "Checking required repository files..."
+          required_files=(
+            "README.md"
+            "LICENSE"
+            "CHANGELOG.md"
+            "ROADMAP.md"
+            "VERSION"
+            "MASTER_INDEX.md"
+            "CONTRIBUTING.md"
+            "SECURITY.md"
+            "CODE_OF_CONDUCT.md"
+            "SUPPORT.md"
+          )
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing required file: $file"
+              exit 1
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+
+      - name: Check GitHub Configuration
+        run: |
+          github_files=(
+            ".github/workflows"
+            ".github/ISSUE_TEMPLATE"
+            ".github/CODEOWNERS"
+            ".github/PULL_REQUEST_TEMPLATE.md"
+          )
+          for file in "${github_files[@]}"; do
+            if [ ! -e "$file" ]; then
+              echo "❌ Missing: $file"
+              exit 1
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+
+      - name: Hard Gate Summary
+        run: echo "✅ Hard Gate passed (unconditional checks)!"
+
+  # -----------------------------------------------------------------
+  # FULL VALIDATION: heavy schema/spec/script/ADR checks.
+  # Runs only when the governed scope was touched, OR on any push
+  # event (push = already merged into a protected branch, so we
+  # validate fully regardless of which paths changed, as
+  # defense-in-depth against a workflow file that was altered
+  # outside the PR review flow).
+  # -----------------------------------------------------------------
+  full-validation:
+    name: Full Validation (governed scope)
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.governed == 'true' || github.event_name == 'push'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,49 +135,6 @@ jobs:
         run: |
           echo "Checking file naming conventions..."
           bash scripts/validate.sh
-
-      - name: Check Required Files
-        run: |
-          echo "Checking required repository files..."
-          required_files=(
-            "README.md"
-            "LICENSE"
-            "CHANGELOG.md"
-            "ROADMAP.md"
-            "VERSION"
-            "MASTER_INDEX.md"
-            "CONTRIBUTING.md"
-            "SECURITY.md"
-            "CODE_OF_CONDUCT.md"
-            "SUPPORT.md"
-          )
-
-          for file in "${required_files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "❌ Missing required file: $file"
-              exit 1
-            else
-              echo "✅ Found: $file"
-            fi
-          done
-
-      - name: Check GitHub Configuration
-        run: |
-          github_files=(
-            ".github/workflows"
-            ".github/ISSUE_TEMPLATE"
-            ".github/CODEOWNERS"
-            ".github/PULL_REQUEST_TEMPLATE.md"
-          )
-
-          for file in "${github_files[@]}"; do
-            if [ ! -e "$file" ]; then
-              echo "❌ Missing: $file"
-              exit 1
-            else
-              echo "✅ Found: $file"
-            fi
-          done
 
       - name: Validate ADR Format
         run: |
