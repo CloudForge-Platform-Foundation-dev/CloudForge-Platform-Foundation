@@ -159,7 +159,7 @@ tags:
 paths:
   /health:
     get:
-      operationId: getHealth
+
       tags:
         - Health
       summary: Health check
