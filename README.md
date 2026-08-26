@@ -122,3 +122,5 @@ See [LICENSE](LICENSE) file for details.
 ---
 
 **Design Once. Reuse Everywhere. Scale Without Limits.**
+
+test smart gate positive case
