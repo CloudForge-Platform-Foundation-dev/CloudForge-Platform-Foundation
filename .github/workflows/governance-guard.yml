@@ -1,0 +1,122 @@
+name: Governance Guard
+
+# -----------------------------------------------------------------
+# PURPOSE (P0-6 Negative #2 remediation):
+# `foundation-validation.yml` runs on `pull_request`, which means
+# GitHub executes the version of that workflow file FROM THE PR'S
+# OWN BRANCH. A PR that edits the governed-scope path-filter list
+# (e.g. removing '.github/workflows/**') can therefore change the
+# rule and violate it in the same commit — full-validation gets
+# silently skipped for that PR. See P0-6 test #9.
+#
+# `pull_request_target` does not have this problem: GitHub always
+# loads THIS file from the base branch (main), never from the PR
+# head, regardless of what the PR changes. So a PR cannot edit this
+# file to weaken the check that runs against itself.
+#
+# SAFETY: this job never checks out PR code and never uses secrets.
+# It only reads PR metadata (changed files) and check-run results
+# via the read-only GitHub API. That is what makes pull_request_target
+# safe to use here even though it exposes secrets to the workflow
+# context in general.
+# -----------------------------------------------------------------
+
+on:
+  pull_request_target:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+
+jobs:
+  guard:
+    name: Verify Full Validation Ran For Governed Changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine if PR touches governed scope
+        id: files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            // Mirrors the governed scope in foundation-validation.yml.
+            // Kept here independently on purpose: this list is only ever
+            // read from main (pull_request_target), so a PR cannot edit
+            // it away.
+            const governedPatterns = [
+              /^schemas\//,
+              /^policies\//,
+              /^templates\//,
+              /^\.spectral\.yaml$/,
+              /^scripts\//,
+              /^\.github\/workflows\//,
+              /^docs\/adr\//,
+            ];
+
+            const touched = files
+              .filter(f => governedPatterns.some(p => p.test(f.filename)))
+              .map(f => f.filename);
+
+            core.setOutput('governed', touched.length > 0 ? 'true' : 'false');
+            core.info(touched.length
+              ? `Governed paths touched: ${touched.join(', ')}`
+              : 'No governed paths touched.');
+
+      - name: Require Full Validation to have succeeded
+        if: steps.files.outputs.governed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = context.payload.pull_request.head.sha;
+            const targetName = 'Full Validation (governed scope)';
+
+            // Poll: the sibling "Foundation Validation" workflow (triggered
+            // by `pull_request`) may still be running when this job starts.
+            const maxAttempts = 20;   // ~10 minutes total
+            const delayMs = 30_000;
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              const { data } = await github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: sha,
+                check_name: targetName,
+              });
+
+              const run = data.check_runs
+                .sort((a, b) => new Date(b.started_at) - new Date(a.started_at))[0];
+
+              if (run && run.status === 'completed') {
+                if (run.conclusion === 'success') {
+                  core.info(`"${targetName}" succeeded (conclusion=success). OK.`);
+                  return;
+                }
+                core.setFailed(
+                  `This PR touches governed paths, but "${targetName}" did not ` +
+                  `succeed for commit ${sha} (conclusion=${run.conclusion}). ` +
+                  `A governed-scope PR must not merge without full validation passing.`
+                );
+                return;
+              }
+
+              if (run && run.status !== 'completed') {
+                core.info(`Attempt ${attempt}/${maxAttempts}: "${targetName}" still ${run.status}, waiting...`);
+              } else {
+                core.info(`Attempt ${attempt}/${maxAttempts}: "${targetName}" not found yet, waiting...`);
+              }
+
+              await new Promise(r => setTimeout(r, delayMs));
+            }
+
+            core.setFailed(
+              `Timed out waiting for "${targetName}" to complete for commit ${sha}. ` +
+              `Treating as unverified — this PR touches governed paths and cannot be trusted to merge.`
+            );
