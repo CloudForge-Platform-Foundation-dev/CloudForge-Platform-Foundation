@@ -1,19 +1,40 @@
+# CODEOWNERS — CloudForge-Platform-Foundation
+#
+# Solo-maintainer setup: all governed paths point to the same owner.
+# Purpose: force any change to governed scope to go through a PR
+# (not a direct push) and be explicitly reviewed/approved, closing
+# the gap found in P0-6 Negative #2 (self-modifying workflow attack),
+# where the Smart Gate's own path-filter logic could be edited away
+# in the same commit that violated it.
+#
+# NOTE (solo-maintainer limitation): GitHub does not allow a PR author
+# to satisfy "require review from Code Owners" by approving their own
+# PR. With a single collaborator, branch protection should NOT enable
+# that rule — see docs/adr/ for the accepted mitigation instead
+# (see ADR on P0-6 Negative #2 finding).
+
 # Global owners
-* @cloudforge-architecture-board
+* @niphan1000-cyber1000
 
 # Architecture decisions
-docs/adr/ @cloudforge-architecture-board
+docs/adr/ @niphan1000-cyber1000
 
 # Security policies and standards
-docs/security/ @cloudforge-security-board
-policies/security/ @cloudforge-security-board
+docs/security/ @niphan1000-cyber1000
+policies/ @niphan1000-cyber1000
 
 # Schemas and data models
-schemas/ @cloudforge-architecture-board @cloudforge-data-team
+schemas/ @niphan1000-cyber1000
+
+# Templates
+templates/ @niphan1000-cyber1000
+
+# Spectral ruleset
+.spectral.yaml @niphan1000-cyber1000
 
 # Engineering standards
-docs/standards/ @cloudforge-engineering-board
-scripts/ @cloudforge-engineering-board
+docs/standards/ @niphan1000-cyber1000
+scripts/ @niphan1000-cyber1000
 
-# GitHub configuration
-.github/ @cloudforge-platform-team
+# GitHub configuration (includes workflows — governed, see P0-6)
+.github/ @niphan1000-cyber1000
