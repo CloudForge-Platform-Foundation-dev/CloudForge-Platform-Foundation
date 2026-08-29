@@ -1,5 +1,5 @@
 name: Governance Guard
-
+# test: verify branch protection enforces merge block
 # -----------------------------------------------------------------
 # PURPOSE (P0-6 Negative #2 remediation):
 # `foundation-validation.yml` runs on `pull_request`, which means
