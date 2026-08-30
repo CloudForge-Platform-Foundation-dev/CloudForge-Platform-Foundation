@@ -146,6 +146,11 @@ own governed-scope PR without independent review.
 - PR #10 — CODEOWNERS fix (fictional teams → real account)
 - PR #11 — Governance Guard added
 - PR #12 — Negative (self-modifying attack), retest post-remediation — confirmed the fix
-
+- PR #15 — Negative (self-modifying attack), retest on new org/public
+  repo after migrating off personal private repo (branch protection
+  enforcement requires public repo or paid tier on personal accounts).
+  Same result as PR #12: Smart Gate bypassed as expected, Governance
+  Guard caught it, merge button disabled. Confirms remediation holds
+  after the repo migration.
 All test PRs were closed without merging; only PR #10 and PR #11 were
 merged to `main`.
