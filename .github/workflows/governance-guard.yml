@@ -1,24 +1,55 @@
 name: Governance Guard
-# test: verify branch protection enforces merge block
 # -----------------------------------------------------------------
-# PURPOSE (P0-6 Negative #2 remediation):
-# `foundation-validation.yml` runs on `pull_request`, which means
-# GitHub executes the version of that workflow file FROM THE PR'S
-# OWN BRANCH. A PR that edits the governed-scope path-filter list
-# (e.g. removing '.github/workflows/**') can therefore change the
-# rule and violate it in the same commit — full-validation gets
-# silently skipped for that PR. See P0-6 test #9.
+# PURPOSE (P0-6 Negative #2 remediation, and follow-up P0 finding):
 #
-# `pull_request_target` does not have this problem: GitHub always
-# loads THIS file from the base branch (main), never from the PR
-# head, regardless of what the PR changes. So a PR cannot edit this
-# file to weaken the check that runs against itself.
+# Round 1 (P0-6 Negative #2 / test #9): `foundation-validation.yml`
+# runs on `pull_request`, so GitHub executes it FROM THE PR'S OWN
+# BRANCH. A PR that edits the governed-scope path-filter list (e.g.
+# removing '.github/workflows/**') could change the rule and violate
+# it in the same commit — full-validation gets silently skipped.
+# `pull_request_target` fixed the *scope-detection* half of this,
+# because this file is always loaded from the base branch (main),
+# never from the PR head, regardless of what the PR changes.
 #
-# SAFETY: this job never checks out PR code and never uses secrets.
-# It only reads PR metadata (changed files) and check-run results
-# via the read-only GitHub API. That is what makes pull_request_target
-# safe to use here even though it exposes secrets to the workflow
-# context in general.
+# Round 2 (this revision): the *scope-detection* fix above was not
+# enough on its own. The original version of this file still asked
+# "did a check run NAMED 'Full Validation (governed scope)' report
+# conclusion=success?" — but that check's actual STEPS are defined in
+# foundation-validation.yml, which (per Round 1) is loaded from the
+# PR's OWN branch. A PR can therefore keep the job's `name:` field
+# identical while hollowing out its steps to `echo pass`, and this
+# guard would have been fooled by the matching name + green
+# conclusion, without any real schema/spectral/naming/ADR check ever
+# running. Renaming the check would not even be necessary.
+#
+# A related variant of the same root problem: even a genuine,
+# unmodified Full Validation job in the PR branch still validates
+# using that PR's own copy of scripts/validate.sh and .spectral.yaml
+# — both of which are themselves governed paths a PR could weaken in
+# the same commit it's meant to be checked against.
+#
+# FIX: this job no longer trusts any check run's name or conclusion.
+# It re-implements the full validation itself, using:
+#   - VALIDATION LOGIC (scripts/validate.sh, .spectral.yaml, the ADR/
+#     schema rules below) checked out from the BASE branch — a PR can
+#     never alter what logic runs against it.
+#   - DATA TO VALIDATE (schemas/, docs/adr/, etc.) checked out from
+#     the PR HEAD — what's actually being proposed.
+# A PR can no longer spoof a check name, and can no longer weaken the
+# rules it's judged against, because neither the check's identity nor
+# its logic ever comes from the PR itself.
+#
+# SAFETY: no secrets are used anywhere in this job. `permissions` is
+# read-only. The PR-head checkout is used only as a read-only data
+# source for validation commands (schema files, YAML specs, ADR
+# markdown) — it is never executed as a script, and its own
+# .github/workflows/ or scripts/ content is never invoked.
+#
+# OPERATOR NOTE: branch protection's "required status checks" must
+# list *this* job ("Governance Guard / guard"), not
+# "Full Validation (governed scope)". The latter remains useful as
+# fast feedback for contributors, but it must not be trusted as an
+# independent gate — this job is the authoritative one.
 # -----------------------------------------------------------------
 
 on:
@@ -29,7 +60,6 @@ on:
 permissions:
   contents: read
   pull-requests: read
-  checks: read
 
 jobs:
   guard:
@@ -70,53 +100,74 @@ jobs:
               ? `Governed paths touched: ${touched.join(', ')}`
               : 'No governed paths touched.');
 
-      - name: Require Full Validation to have succeeded
+      - name: Checkout trusted validation tooling (base branch)
         if: steps.files.outputs.governed == 'true'
-        uses: actions/github-script@v7
+        uses: actions/checkout@v4
         with:
-          script: |
-            const sha = context.payload.pull_request.head.sha;
-            const targetName = 'Full Validation (governed scope)';
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted-tooling
+          persist-credentials: false
 
-            // Poll: the sibling "Foundation Validation" workflow (triggered
-            // by `pull_request`) may still be running when this job starts.
-            const maxAttempts = 20;   // ~10 minutes total
-            const delayMs = 30_000;
+      - name: Checkout PR content (read-only data to validate)
+        if: steps.files.outputs.governed == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr-content
+          persist-credentials: false
 
-            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-              const { data } = await github.rest.checks.listForRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: sha,
-                check_name: targetName,
-              });
+      - name: Setup Node.js
+        if: steps.files.outputs.governed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-              const run = data.check_runs
-                .sort((a, b) => new Date(b.started_at) - new Date(a.started_at))[0];
+      - name: Install validation tools
+        if: steps.files.outputs.governed == 'true'
+        run: npm install -g @stoplight/spectral-cli ajv-cli ajv-formats
 
-              if (run && run.status === 'completed') {
-                if (run.conclusion === 'success') {
-                  core.info(`"${targetName}" succeeded (conclusion=success). OK.`);
-                  return;
-                }
-                core.setFailed(
-                  `This PR touches governed paths, but "${targetName}" did not ` +
-                  `succeed for commit ${sha} (conclusion=${run.conclusion}). ` +
-                  `A governed-scope PR must not merge without full validation passing.`
-                );
-                return;
-              }
+      - name: Run trusted validation against PR content
+        if: steps.files.outputs.governed == 'true'
+        working-directory: pr-content
+        run: |
+          set -euo pipefail
 
-              if (run && run.status !== 'completed') {
-                core.info(`Attempt ${attempt}/${maxAttempts}: "${targetName}" still ${run.status}, waiting...`);
-              } else {
-                core.info(`Attempt ${attempt}/${maxAttempts}: "${targetName}" not found yet, waiting...`);
-              }
+          echo "Validating canonical schemas..."
+          shopt -s nullglob
+          schema_files=(schemas/canonical/*.schema.json)
+          for schema in "${schema_files[@]}"; do
+            echo "Checking $schema"
+            ajv compile -s "$schema" --spec=draft2020 -c ajv-formats --strict
+          done
 
-              await new Promise(r => setTimeout(r, delayMs));
-            }
+          echo "Validating API templates (ruleset from base branch)..."
+          api_specs=(schemas/api/*.yaml)
+          if [ ${#api_specs[@]} -gt 0 ]; then
+            spectral lint "${api_specs[@]}" --ruleset ../trusted-tooling/.spectral.yaml
+          fi
 
-            core.setFailed(
-              `Timed out waiting for "${targetName}" to complete for commit ${sha}. ` +
-              `Treating as unverified — this PR touches governed paths and cannot be trusted to merge.`
-            );
+          echo "Checking naming conventions (script from base branch)..."
+          bash ../trusted-tooling/scripts/validate.sh
+
+          echo "Checking ADR files..."
+          adr_files=(docs/adr/*.md)
+          for adr in "${adr_files[@]}"; do
+            if [ "$(basename "$adr")" != "README.md" ]; then
+              if ! grep -q "## Status" "$adr"; then
+                echo "❌ ADR missing Status section: $adr"
+                exit 1
+              fi
+              if ! grep -q "## Decision" "$adr"; then
+                echo "❌ ADR missing Decision section: $adr"
+                exit 1
+              fi
+              echo "✅ Valid ADR: $(basename "$adr")"
+            fi
+          done
+
+          echo "✅ Governance Guard: full validation passed against trusted tooling."
+
+      - name: Explicit pass for non-governed PRs
+        if: steps.files.outputs.governed != 'true'
+        run: echo "No governed paths touched — Governance Guard has nothing to enforce."
