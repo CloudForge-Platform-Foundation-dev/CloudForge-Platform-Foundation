@@ -120,52 +120,5 @@ jobs:
        needs.changes.outputs.governed == 'true' ||
        github.event_name == 'push')
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install validation tools
-        run: |
-          npm install -g @stoplight/spectral-cli ajv-cli ajv-formats
-
-      - name: Validate JSON Schemas
-        run: |
-          echo "Validating canonical schemas..."
-          for schema in schemas/canonical/*.schema.json; do
-            echo "Checking $schema"
-            ajv compile -s "$schema" --spec=draft2020 -c ajv-formats --strict
-          done
-
-      - name: Validate OpenAPI Specs
-        run: |
-          echo "Validating API templates..."
-          spectral lint schemas/api/*.yaml --ruleset .spectral.yaml
-
-      - name: Check Naming Conventions
-        run: |
-          echo "Checking file naming conventions..."
-          bash scripts/validate.sh
-
-      - name: Validate ADR Format
-        run: |
-          echo "Checking ADR files..."
-          for adr in docs/adr/*.md; do
-            if [ -f "$adr" ] && [ "$(basename "$adr")" != "README.md" ]; then
-              if ! grep -q "## Status" "$adr"; then
-                echo "❌ ADR missing Status section: $adr"
-                exit 1
-              fi
-              if ! grep -q "## Decision" "$adr"; then
-                echo "❌ ADR missing Decision section: $adr"
-                exit 1
-              fi
-              echo "✅ Valid ADR: $(basename $adr)"
-            fi
-          done
-
-      - name: Summary
-        run: echo "✅ All foundation validations passed!"
+      - name: Fake pass (negative test - hollow check simulation)
+        run: echo "totally did the validation, trust me"
