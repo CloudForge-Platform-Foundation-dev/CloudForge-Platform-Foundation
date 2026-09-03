@@ -4,8 +4,8 @@
 
 1. 📖 Read [docs/getting-started.md](docs/getting-started.md)
 2. 🔍 Check [MASTER_INDEX.md](MASTER_INDEX.md) for relevant documentation
-3. 💬 Open a [GitHub Discussion](https://github.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/discussions)
-4. 🐛 For bugs, use [GitHub Issues](https://github.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/issues)
+3. 💬 Open a [GitHub Discussion](https://github.com/CloudForge-Platform-Foundation-dev/CloudForge-Platform-Foundation/discussions)
+4. 🐛 For bugs, use [GitHub Issues](https://github.com/CloudForge-Platform-Foundation-dev/CloudForge-Platform-Foundation/issues)
 
 ## Studio-Specific Issues
 

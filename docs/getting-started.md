@@ -72,7 +72,7 @@ Run the validation script locally:
 
 ```bash
 # Clone the Foundation repo
-git clone https://github.com/niphan1000-cyber1000/CloudForge-Platform-Foundation.git
+git clone https://github.com/CloudForge-Platform-Foundation-dev/CloudForge-Platform-Foundation.git
 
 # Run validation against your studio
 cd your-studio-repo
