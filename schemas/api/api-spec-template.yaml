@@ -5,6 +5,7 @@ info:
     API specification template for CloudForge Studios.
     All Studios must follow this structure and conventions.
   version: 1.0.0
+  x-owner: "REPLACE_WITH_YOUR_TEAM_NAME"  # required by cloudforge-owner-metadata (GOV-001) — set this before publishing your real spec
   contact:
     name: CloudForge Team
     email: team@cloudforge.example.com
