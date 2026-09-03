@@ -67,28 +67,6 @@ jobs:
             exit 1
           fi
 
-      - name: API Governance Gate (OpenAPI)
-        run: |
-          set -euo pipefail
-          # Studios are expected to publish their API contract at openapi.yaml
-          # (repo root), matching the convention used across the platform.
-          # A Studio with no API surface yet has nothing to validate.
-          if [ ! -f "openapi.yaml" ] && [ ! -f "openapi.json" ]; then
-            echo "No openapi.yaml/openapi.json found in this Studio yet — nothing to validate."
-            exit 0
-          fi
-          spec="openapi.yaml"
-          [ -f "$spec" ] || spec="openapi.json"
-
-          npm install -g @stoplight/spectral-cli
-
-          # Lint against the Foundation's OWN .spectral.yaml (SSOT per ADR-003),
-          # not a copy — this is the ruleset CloudForge already defines
-          # (cloudforge-security-schemes, operation-tags, operation-description,
-          # plus the inherited spectral:oas / spectral:asyncapi base rules) but
-          # which nothing was previously running against Studio API contracts.
-          spectral lint "$spec" --ruleset foundation/.spectral.yaml --fail-severity=error
-
       - name: Security Scan (Trivy)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -98,3 +76,44 @@ jobs:
           severity: "CRITICAL,HIGH"
           ignore-unfixed: true
           exit-code: "1"
+
+  detect-openapi-spec:
+    runs-on: ubuntu-latest
+    outputs:
+      has_spec: ${{ steps.detect.outputs.has_spec }}
+      spec_path: ${{ steps.detect.outputs.spec_path }}
+    steps:
+      - name: Checkout Studio
+        uses: actions/checkout@v4
+
+      - id: detect
+        name: Detect OpenAPI spec
+        run: |
+          # A job that calls a reusable workflow via `uses:` can't have its
+          # own checkout step, so its `if:` condition can't hashFiles() the
+          # Studio's repo directly — that's why this lives in its own job
+          # with a real checkout, and api-governance-gate below just reads
+          # this job's outputs instead.
+          if [ -f "openapi.yaml" ]; then
+            echo "has_spec=true" >> "$GITHUB_OUTPUT"
+            echo "spec_path=openapi.yaml" >> "$GITHUB_OUTPUT"
+          elif [ -f "openapi.json" ]; then
+            echo "has_spec=true" >> "$GITHUB_OUTPUT"
+            echo "spec_path=openapi.json" >> "$GITHUB_OUTPUT"
+          else
+            echo "No openapi.yaml/openapi.json found in this Studio yet — nothing to validate."
+            echo "has_spec=false" >> "$GITHUB_OUTPUT"
+            echo "spec_path=" >> "$GITHUB_OUTPUT"
+          fi
+
+  api-governance-gate:
+    needs: detect-openapi-spec
+    if: needs.detect-openapi-spec.outputs.has_spec == 'true'
+    uses: niphan1000-cyber1000/foundation-validation/.github/workflows/reusable-gate.yml@v1
+    with:
+      spec_path: ${{ needs.detect-openapi-spec.outputs.spec_path }}
+      # foundation_repo/foundation_ref/engine_ref/environment all use the
+      # reusable workflow's own defaults (this org's Foundation repo@main,
+      # engine@v1, production) — only spec_path varies per Studio.
+    secrets:
+      foundation_pat: ${{ secrets.FOUNDATION_PAT }}
