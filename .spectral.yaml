@@ -26,3 +26,37 @@ rules:
         schema:
           required: ["BadRequest", "Unauthorized", "NotFound", "InternalError"]
     severity: warn
+
+  # --- Ported from foundation-validation's policies/governance.rego and
+  # policies/security.rego (GOV-001 / GOV-002 / SEC-003), so this single
+  # .spectral.yaml stays the one CloudForge governance ruleset (ADR-003
+  # SSOT) instead of splitting API governance across two separate engines.
+
+  cloudforge-owner-metadata:
+    description: "API spec must declare an owning team via info.x-owner (GOV-001)"
+    given: "$.info"
+    then:
+      field: x-owner
+      function: truthy
+    severity: error
+
+  cloudforge-semver-version:
+    description: "info.version must follow Semantic Versioning X.Y.Z (GOV-002)"
+    given: "$.info.version"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    severity: error
+
+  cloudforge-no-sensitive-query-params:
+    description: "Query parameters must not carry tokens/passwords/secrets/API keys (SEC-003)"
+    given: "$..parameters[?(@.in=='query')].name"
+    then:
+      function: pattern
+      functionOptions:
+        # Spectral's pattern function has no case-insensitive flag option,
+        # so common casings (lower/camel/UPPER/snake) are enumerated
+        # explicitly rather than relying on a single case-insensitive regex.
+        notMatch: "(token|Token|TOKEN|password|Password|PASSWORD|secret|Secret|SECRET|apikey|apiKey|api_key|APIKEY|access_token|accessToken|ACCESS_TOKEN)"
+    severity: error

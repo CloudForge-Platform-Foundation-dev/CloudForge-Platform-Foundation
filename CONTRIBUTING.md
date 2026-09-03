@@ -78,4 +78,4 @@ See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
 
 ## 💬 Questions?
 
-Open a [GitHub Discussion](https://github.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/discussions) for architecture proposals.
+Open a [GitHub Discussion](https://github.com/CloudForge-Platform-Foundation-dev/CloudForge-Platform-Foundation/discussions) for architecture proposals.

@@ -10,7 +10,7 @@
 
 ```bash
 # Clone the repo
-git clone https://github.com/niphan1000-cyber1000/cloudforge-{studio-name}-studio.git
+git clone https://github.com/CloudForge-Platform-Foundation-dev/cloudforge-{studio-name}-studio.git
 cd cloudforge-{studio-name}-studio
 
 # Install dependencies
@@ -33,7 +33,7 @@ npm run dev
 
 ## Contributing
 
-See [CloudForge Platform Foundation - CONTRIBUTING.md](https://github.com/niphan1000-cyber1000/CloudForge-Platform-Foundation/blob/main/CONTRIBUTING.md).
+See [CloudForge Platform Foundation - CONTRIBUTING.md](https://github.com/CloudForge-Platform-Foundation-dev/CloudForge-Platform-Foundation/blob/main/CONTRIBUTING.md).
 
 ## License
 

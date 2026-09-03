@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Foundation
         uses: actions/checkout@v4
         with:
-          repository: niphan1000-cyber1000/CloudForge-Platform-Foundation
+          repository: CloudForge-Platform-Foundation-dev/CloudForge-Platform-Foundation
           path: foundation
           # CloudForge-Platform-Foundation is a private repo, so the default
           # GITHUB_TOKEN (scoped only to this repo) cannot check it out.
@@ -66,6 +66,28 @@ jobs:
             echo "One or more Studio schemas failed validation."
             exit 1
           fi
+
+      - name: API Governance Gate (OpenAPI)
+        run: |
+          set -euo pipefail
+          # Studios are expected to publish their API contract at openapi.yaml
+          # (repo root), matching the convention used across the platform.
+          # A Studio with no API surface yet has nothing to validate.
+          if [ ! -f "openapi.yaml" ] && [ ! -f "openapi.json" ]; then
+            echo "No openapi.yaml/openapi.json found in this Studio yet — nothing to validate."
+            exit 0
+          fi
+          spec="openapi.yaml"
+          [ -f "$spec" ] || spec="openapi.json"
+
+          npm install -g @stoplight/spectral-cli
+
+          # Lint against the Foundation's OWN .spectral.yaml (SSOT per ADR-003),
+          # not a copy — this is the ruleset CloudForge already defines
+          # (cloudforge-security-schemes, operation-tags, operation-description,
+          # plus the inherited spectral:oas / spectral:asyncapi base rules) but
+          # which nothing was previously running against Studio API contracts.
+          spectral lint "$spec" --ruleset foundation/.spectral.yaml --fail-severity=error
 
       - name: Security Scan (Trivy)
         uses: aquasecurity/trivy-action@v0.36.0
