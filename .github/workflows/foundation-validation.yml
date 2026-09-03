@@ -120,5 +120,18 @@ jobs:
        needs.changes.outputs.governed == 'true' ||
        github.event_name == 'push')
     steps:
-      - name: Fake pass (negative test - hollow check simulation)
-        run: echo "totally did the validation, trust me"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install schema validation tooling
+        run: npm install -g ajv-cli ajv-formats
+
+      - name: Run Foundation Validation Script
+        run: |
+          chmod +x scripts/validate.sh
+          ./scripts/validate.sh
