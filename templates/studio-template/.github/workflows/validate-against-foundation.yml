@@ -112,8 +112,18 @@ jobs:
     uses: niphan1000-cyber1000/foundation-validation/.github/workflows/reusable-gate.yml@v1
     with:
       spec_path: ${{ needs.detect-openapi-spec.outputs.spec_path }}
-      # foundation_repo/foundation_ref/engine_ref/environment all use the
-      # reusable workflow's own defaults (this org's Foundation repo@main,
-      # engine@v1, production) — only spec_path varies per Studio.
+      # foundation_repo/foundation_ref/environment use the reusable workflow's
+      # own defaults (this org's Foundation repo@main, production).
+      #
+      # engine_ref is the ONE exception — it is NOT inferred from the @v1
+      # used in `uses:` above (see reusable-gate.yml's own comment on this),
+      # and its default is "main", not "v1". Every Studio generated from this
+      # template must pin it explicitly here, or the gate silently pulls the
+      # validation engine from foundation-validation's @main on every run —
+      # exactly the unpinned-version risk this whole @v1 setup exists to
+      # avoid. (cloudforge-ingest-studio shipped without this line and had
+      # to be patched after the fact — fixed here so future Studios don't
+      # repeat it.)
+      engine_ref: v1
     secrets:
       foundation_pat: ${{ secrets.FOUNDATION_PAT }}
