@@ -1,0 +1,262 @@
+# Foundation Rule Registry
+#
+# This is the SSOT registry for rules defined in this repo's own
+# .spectral.yaml — the ruleset that foundation-validation's reusable gate
+# (niphan1000-cyber1000/foundation-validation) lints every Studio's
+# OpenAPI spec against (see .github/workflows/reusable-gate.yml,
+# `--ruleset "../foundation/.spectral.yaml"` in the engine repo).
+#
+# WHY THIS FILE EXISTS
+# ---------------------
+# foundation-validation resolves every Spectral finding's severity and
+# gate behavior against a rule registry (rules/registry.yaml in that
+# repo). That registry only catalogues foundation-validation's OWN
+# bundled custom rules — it has no entries for the "cloudforge-*" rules
+# (or the built-in Spectral rules this repo overrides the severity of)
+# defined below. Without a matching registry entry, every finding from
+# THIS ruleset fell through to foundation-validation's unregistered-rule
+# fail-safe path.
+#
+# The engine's reusable-gate.yml passes `--registry` as a comma-separated
+# list and merges this file in alongside its own bundled registry (this
+# file's entries win on any rule_id collision), so this is the one place
+# to add/update metadata for a rule defined in .spectral.yaml.
+#
+# RULE_ID FORMAT — READ BEFORE ADDING A RULE
+# --------------------------------------------
+# foundation-validation's Spectral-output parser
+# (validators/openapi/openapi_engine.py::parse_spectral_output) builds
+# each finding's rule_id from Spectral's own "code" field (the rule's key
+# name in .spectral.yaml), NOT the raw key itself:
+#
+#   rule_id = code if code.startswith(("SCH-","OAS-","POL-","SEC-","GOV-","TRC-"))
+#             else f"OAS-{code}"
+#
+# None of the rule keys below (cloudforge-*, operation-*, info-*) start
+# with one of those prefixes, so EVERY ONE of them gets prefixed with
+# "OAS-" — e.g. the .spectral.yaml rule key "cloudforge-owner-metadata"
+# produces the finding rule_id "OAS-cloudforge-owner-metadata", not
+# "GOV-001" and not "cloudforge-owner-metadata" on its own. Register the
+# PREFIXED form below, or the lookup will miss exactly the same way the
+# original bug did.
+#
+# Severity note: Spectral's own severity keyword (error/warn/info/hint)
+# is normalized by the engine into CRITICAL/HIGH/MEDIUM/LOW BEFORE the
+# registry is consulted; the "severity" field below is what the registry
+# authoritatively sets for a catalogued rule (it does not need to match
+# Spectral's keyword one-for-one, but should stay intentional, not
+# accidental, if it differs).
+
+version: "1.0.0"
+
+rules:
+  - rule_id: OAS-cloudforge-security-schemes
+    domain: security
+    version: "1.0.0"
+    severity: CRITICAL
+    title: "API must define security schemes"
+    description: >
+      The OpenAPI "components" object must declare a truthy
+      "securitySchemes" entry.
+    purpose: >
+      An API with no security scheme declared at all cannot express any
+      authentication/authorization requirement — this is the structural
+      prerequisite the per-operation "security" requirement (see
+      SEC-001-MISSING-SECURITY in foundation-validation's own registry)
+      depends on.
+    requirement_id: null
+    implementation: ".spectral.yaml (cloudforge-security-schemes)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: FAIL
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-cloudforge-error-responses
+    domain: openapi
+    version: "1.0.0"
+    severity: MEDIUM
+    title: "API should define common error responses"
+    description: >
+      "components.responses" should declare BadRequest, Unauthorized,
+      NotFound, and InternalError entries.
+    purpose: >
+      Consistent, reusable error-response shapes across every CloudForge
+      API. Advisory (warn in .spectral.yaml), not a hard requirement —
+      kept at WARN gate behavior to match.
+    requirement_id: null
+    implementation: ".spectral.yaml (cloudforge-error-responses)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: WARN
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-cloudforge-owner-metadata
+    domain: governance
+    version: "1.0.0"
+    severity: HIGH
+    title: "API spec must declare an owning team via info.x-owner (GOV-001)"
+    description: >
+      OpenAPI "info" object must include a truthy "x-owner" field.
+    purpose: >
+      Ported from foundation-validation's policies/governance.rego
+      GOV-001 checks (see that repo's ADR-003 SSOT note in this repo's
+      .spectral.yaml). Also independently enforced as
+      GOV-001-MISSING-OWNER in foundation-validation's own bundled OPA
+      policy — this Spectral rule and that Rego rule are a deliberate
+      defense-in-depth pair over the same requirement, not a duplicate
+      to be deduplicated.
+    requirement_id: null
+    implementation: ".spectral.yaml (cloudforge-owner-metadata)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: FAIL
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-cloudforge-semver-version
+    domain: governance
+    version: "1.0.0"
+    severity: MEDIUM
+    title: "info.version must follow Semantic Versioning X.Y.Z (GOV-002)"
+    description: >
+      OpenAPI "info.version" must match ^[0-9]+\.[0-9]+\.[0-9]+$.
+    purpose: >
+      Ported from foundation-validation's policies/governance.rego
+      GOV-002 check. Independently enforced as GOV-002-INVALID-SEMVER in
+      foundation-validation's own bundled OPA policy (defense-in-depth
+      pair, kept at the same WARN-tier severity as that entry).
+    requirement_id: null
+    implementation: ".spectral.yaml (cloudforge-semver-version)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: WARN
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-cloudforge-no-sensitive-query-params
+    domain: security
+    version: "1.0.0"
+    severity: CRITICAL
+    title: "Query parameters must not carry tokens/passwords/secrets/API keys (SEC-003)"
+    description: >
+      No query parameter name may match a sensitive-term pattern
+      (token/password/secret/apikey/access_token, in common casings).
+    purpose: >
+      Ported from foundation-validation's policies/security.rego SEC-003
+      check. Independently enforced as SEC-003-SENSITIVE-QUERY-PARAM in
+      foundation-validation's own bundled OPA policy — defense-in-depth
+      pair, both at CRITICAL.
+    requirement_id: null
+    implementation: ".spectral.yaml (cloudforge-no-sensitive-query-params)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: FAIL
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  # --- Built-in spectral:oas rules whose severity this repo overrides ---
+  # These are not CloudForge-specific rule bodies, just severity
+  # overrides on Spectral's own default ruleset. They still need a
+  # registry entry: without one they fall through to the same
+  # unregistered-rule fail-safe as everything else.
+
+  - rule_id: OAS-operation-operationId
+    domain: openapi
+    version: "1.0.0"
+    severity: HIGH
+    title: "Every operation must declare a unique operationId"
+    description: "Built-in spectral:oas rule, overridden to severity: error in .spectral.yaml."
+    purpose: "operationId is what SDK generators and API catalogs key off of."
+    requirement_id: null
+    implementation: ".spectral.yaml (operation-operationId override)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: FAIL
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-operation-tags
+    domain: openapi
+    version: "1.0.0"
+    severity: HIGH
+    title: "Every operation must declare at least one tag"
+    description: "Built-in spectral:oas rule, overridden to severity: error in .spectral.yaml."
+    purpose: >
+      Defense-in-depth pair with GOV-003-MISSING-OPERATION-TAGS in
+      foundation-validation's own bundled OPA policy.
+    requirement_id: null
+    implementation: ".spectral.yaml (operation-tags override)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: FAIL
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-operation-description
+    domain: openapi
+    version: "1.0.0"
+    severity: MEDIUM
+    title: "Every operation should declare a description"
+    description: "Built-in spectral:oas rule; left at Spectral's default severity: warn."
+    purpose: >
+      Defense-in-depth pair with GOV-003-MISSING-OPERATION-DESCRIPTION in
+      foundation-validation's own bundled OPA policy.
+    requirement_id: null
+    implementation: ".spectral.yaml (operation-description)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: WARN
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-info-contact
+    domain: openapi
+    version: "1.0.0"
+    severity: LOW
+    title: "info.contact should be declared"
+    description: "Built-in spectral:oas rule; left at Spectral's default severity: warn."
+    purpose: "Advisory only — points consumers to whom to contact about the API."
+    requirement_id: null
+    implementation: ".spectral.yaml (info-contact)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: INFO
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
+
+  - rule_id: OAS-info-license
+    domain: openapi
+    version: "1.0.0"
+    severity: LOW
+    title: "info.license should be declared"
+    description: "Built-in spectral:oas rule; left at Spectral's default severity: warn."
+    purpose: "Advisory only."
+    requirement_id: null
+    implementation: ".spectral.yaml (info-license)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: INFO
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"
+    deprecated_version: null
