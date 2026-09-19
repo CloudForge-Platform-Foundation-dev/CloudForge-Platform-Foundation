@@ -40,7 +40,7 @@ rules:
       function: truthy
     severity: error
 
-  cloudforge-semver-version:
+  gov-cloudforge-semver-version:
     description: "info.version must follow Semantic Versioning X.Y.Z (GOV-002)"
     given: "$.info.version"
     then:

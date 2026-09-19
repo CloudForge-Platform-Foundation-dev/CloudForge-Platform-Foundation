@@ -121,7 +121,7 @@ rules:
     introduced_version: "1.0.0"
     deprecated_version: null
 
-  - rule_id: OAS-cloudforge-semver-version
+  - rule_id: GOV-cloudforge-semver-version
     domain: governance
     version: "1.0.0"
     severity: MEDIUM
@@ -134,7 +134,7 @@ rules:
       foundation-validation's own bundled OPA policy (defense-in-depth
       pair, kept at the same WARN-tier severity as that entry).
     requirement_id: null
-    implementation: ".spectral.yaml (cloudforge-semver-version)"
+    implementation: ".spectral.yaml (gov-cloudforge-semver-version)"
     evidence_type: "spec-lint-finding"
     gate_behavior: WARN
     references: []
