@@ -1,4 +1,4 @@
-extends: ["spectral:oas", "spectral:asyncapi"]
+﻿extends: ["spectral:oas", "spectral:asyncapi"]
 
 rules:
   # Enforce CloudForge API standards
@@ -32,7 +32,7 @@ rules:
   # .spectral.yaml stays the one CloudForge governance ruleset (ADR-003
   # SSOT) instead of splitting API governance across two separate engines.
 
-  cloudforge-owner-metadata:
+  gov-cloudforge-owner-metadata:
     description: "API spec must declare an owning team via info.x-owner (GOV-001)"
     given: "$.info"
     then:

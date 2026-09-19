@@ -1,7 +1,7 @@
-# Foundation Rule Registry
+﻿# Foundation Rule Registry
 #
 # This is the SSOT registry for rules defined in this repo's own
-# .spectral.yaml — the ruleset that foundation-validation's reusable gate
+# .spectral.yaml â€” the ruleset that foundation-validation's reusable gate
 # (niphan1000-cyber1000/foundation-validation) lints every Studio's
 # OpenAPI spec against (see .github/workflows/reusable-gate.yml,
 # `--ruleset "../foundation/.spectral.yaml"` in the engine repo).
@@ -11,7 +11,7 @@
 # foundation-validation resolves every Spectral finding's severity and
 # gate behavior against a rule registry (rules/registry.yaml in that
 # repo). That registry only catalogues foundation-validation's OWN
-# bundled custom rules — it has no entries for the "cloudforge-*" rules
+# bundled custom rules â€” it has no entries for the "cloudforge-*" rules
 # (or the built-in Spectral rules this repo overrides the severity of)
 # defined below. Without a matching registry entry, every finding from
 # THIS ruleset fell through to foundation-validation's unregistered-rule
@@ -22,7 +22,7 @@
 # file's entries win on any rule_id collision), so this is the one place
 # to add/update metadata for a rule defined in .spectral.yaml.
 #
-# RULE_ID FORMAT — READ BEFORE ADDING A RULE
+# RULE_ID FORMAT â€” READ BEFORE ADDING A RULE
 # --------------------------------------------
 # foundation-validation's Spectral-output parser
 # (validators/openapi/openapi_engine.py::parse_spectral_output) builds
@@ -34,7 +34,7 @@
 #
 # None of the rule keys below (cloudforge-*, operation-*, info-*) start
 # with one of those prefixes, so EVERY ONE of them gets prefixed with
-# "OAS-" — e.g. the .spectral.yaml rule key "cloudforge-owner-metadata"
+# "OAS-" â€” e.g. the .spectral.yaml rule key "cloudforge-owner-metadata"
 # produces the finding rule_id "OAS-cloudforge-owner-metadata", not
 # "GOV-001" and not "cloudforge-owner-metadata" on its own. Register the
 # PREFIXED form below, or the lookup will miss exactly the same way the
@@ -60,7 +60,7 @@ rules:
       "securitySchemes" entry.
     purpose: >
       An API with no security scheme declared at all cannot express any
-      authentication/authorization requirement — this is the structural
+      authentication/authorization requirement â€” this is the structural
       prerequisite the per-operation "security" requirement (see
       SEC-001-MISSING-SECURITY in foundation-validation's own registry)
       depends on.
@@ -84,7 +84,7 @@ rules:
       NotFound, and InternalError entries.
     purpose: >
       Consistent, reusable error-response shapes across every CloudForge
-      API. Advisory (warn in .spectral.yaml), not a hard requirement —
+      API. Advisory (warn in .spectral.yaml), not a hard requirement â€”
       kept at WARN gate behavior to match.
     requirement_id: null
     implementation: ".spectral.yaml (cloudforge-error-responses)"
@@ -96,7 +96,7 @@ rules:
     introduced_version: "1.0.0"
     deprecated_version: null
 
-  - rule_id: OAS-cloudforge-owner-metadata
+  - rule_id: GOV-cloudforge-owner-metadata
     domain: governance
     version: "1.0.0"
     severity: HIGH
@@ -108,11 +108,11 @@ rules:
       GOV-001 checks (see that repo's ADR-003 SSOT note in this repo's
       .spectral.yaml). Also independently enforced as
       GOV-001-MISSING-OWNER in foundation-validation's own bundled OPA
-      policy — this Spectral rule and that Rego rule are a deliberate
+      policy â€” this Spectral rule and that Rego rule are a deliberate
       defense-in-depth pair over the same requirement, not a duplicate
       to be deduplicated.
     requirement_id: null
-    implementation: ".spectral.yaml (cloudforge-owner-metadata)"
+    implementation: ".spectral.yaml (gov-cloudforge-owner-metadata)"
     evidence_type: "spec-lint-finding"
     gate_behavior: FAIL
     references: []
@@ -154,7 +154,7 @@ rules:
     purpose: >
       Ported from foundation-validation's policies/security.rego SEC-003
       check. Independently enforced as SEC-003-SENSITIVE-QUERY-PARAM in
-      foundation-validation's own bundled OPA policy — defense-in-depth
+      foundation-validation's own bundled OPA policy â€” defense-in-depth
       pair, both at CRITICAL.
     requirement_id: null
     implementation: ".spectral.yaml (cloudforge-no-sensitive-query-params)"
@@ -233,7 +233,7 @@ rules:
     severity: LOW
     title: "info.contact should be declared"
     description: "Built-in spectral:oas rule; left at Spectral's default severity: warn."
-    purpose: "Advisory only — points consumers to whom to contact about the API."
+    purpose: "Advisory only â€” points consumers to whom to contact about the API."
     requirement_id: null
     implementation: ".spectral.yaml (info-contact)"
     evidence_type: "spec-lint-finding"
