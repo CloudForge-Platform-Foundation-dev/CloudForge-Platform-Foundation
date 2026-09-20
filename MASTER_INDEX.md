@@ -15,36 +15,36 @@
 ### Architecture
 | Document | Status | Description |
 |----------|--------|-------------|
-| [docs/architecture/platform-architecture.md](docs/architecture/platform-architecture.md) | 🔄 Draft | Enterprise architecture blueprint |
+| [docs/architecture/platform-architecture.md](docs/architecture/platform-architecture.md) | ✅ Approved | Enterprise architecture blueprint |
 
 ### Governance
 | Document | Status | Description |
 |----------|--------|-------------|
-| [docs/governance/governance-model.md](docs/governance/governance-model.md) | 🔄 Draft | Governance model and review process |
+| [docs/governance/governance-model.md](docs/governance/governance-model.md) | ✅ Approved | Governance model and review process |
 
 ### Security
 | Document | Status | Description |
 |----------|--------|-------------|
-| [docs/security/security-baseline.md](docs/security/security-baseline.md) | 🔄 Draft | Security baseline and hardening guide |
+| [docs/security/security-baseline.md](docs/security/security-baseline.md) | ✅ Approved | Security baseline and hardening guide |
 
 ### Standards
 | Document | Status | Description |
 |----------|--------|-------------|
-| [docs/standards/engineering-standards.md](docs/standards/engineering-standards.md) | 🔄 Draft | Coding and development standards |
-| [docs/standards/api-standards.md](docs/standards/api-standards.md) | 🔄 Draft | API design guidelines |
-| [docs/standards/naming-conventions.md](docs/standards/naming-conventions.md) | 🔄 Draft | Naming conventions across all repos |
+| [docs/standards/engineering-standards.md](docs/standards/engineering-standards.md) | ✅ Approved | Coding and development standards |
+| [docs/standards/api-standards.md](docs/standards/api-standards.md) | ✅ Approved | API design guidelines |
+| [docs/standards/naming-conventions.md](docs/standards/naming-conventions.md) | ✅ Approved | Naming conventions across all repos |
 
 ### Data Model
 | Document | Status | Description |
 |----------|--------|-------------|
-| [docs/data-model/canonical-data-model.md](docs/data-model/canonical-data-model.md) | 🔄 Draft | Canonical data model specification |
+| [docs/data-model/canonical-data-model.md](docs/data-model/canonical-data-model.md) | ✅ Approved | Canonical data model specification |
 | [schemas/canonical/entity.schema.json](schemas/canonical/entity.schema.json) | ✅ Approved | Base entity schema |
 | [schemas/canonical/event.schema.json](schemas/canonical/event.schema.json) | ✅ Approved | Base event schema |
 
 ### AI Agents
 | Document | Status | Description |
 |----------|--------|-------------|
-| [docs/agents/ai-agent-specifications.md](docs/agents/ai-agent-specifications.md) | 🔄 Draft | AI agent specifications |
+| [docs/agents/ai-agent-specifications.md](docs/agents/ai-agent-specifications.md) | ✅ Approved | AI agent specifications |
 
 ### Architecture Decision Records (ADR)
 | ADR | Status | Title |
