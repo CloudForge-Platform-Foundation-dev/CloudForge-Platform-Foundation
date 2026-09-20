@@ -52,6 +52,7 @@
 | [ADR-001](docs/adr/001-multi-repo-vs-mono-repo.md) | ✅ Approved | Multi-Repo vs Mono-Repo Architecture |
 | [ADR-002](docs/adr/002-json-schema-for-canonical-model.md) | ✅ Approved | JSON Schema for Canonical Data Model |
 | [ADR-003](docs/adr/003-three-tier-governance.md) | ✅ Approved | Three-Tier Governance Model |
+| [ADR-004](docs/adr/004-smart-gate-governance.md) | ✅ Approved | Smart Gate Governance |
 
 ---
 
