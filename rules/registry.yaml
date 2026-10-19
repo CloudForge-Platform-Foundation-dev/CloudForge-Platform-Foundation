@@ -2,7 +2,7 @@
 #
 # This is the SSOT registry for rules defined in this repo's own
 # .spectral.yaml â€” the ruleset that foundation-validation's reusable gate
-# (niphan1000-cyber1000/foundation-validation) lints every Studio's
+# (CloudForge-Platform-Foundation-dev/foundation-validation) lints every Studio's
 # OpenAPI spec against (see .github/workflows/reusable-gate.yml,
 # `--ruleset "../foundation/.spectral.yaml"` in the engine repo).
 #
