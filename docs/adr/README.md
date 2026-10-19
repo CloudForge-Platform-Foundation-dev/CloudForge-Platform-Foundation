@@ -30,6 +30,9 @@ Examples:
 | [001](001-multi-repo-vs-mono-repo.md) | Multi-Repo vs Mono-Repo | ✅ Approved |
 | [002](002-json-schema-for-canonical-model.md) | JSON Schema for Canonical Data Model | ✅ Approved |
 | [003](003-three-tier-governance.md) | Three-Tier Governance Model | ✅ Approved |
+| [004](004-smart-gate-governance.md) | Smart Gate Governance | ✅ Approved |
+| [005](005-identity-contract-v1.md) | Identity Contract v1 as the platform JWT standard | 📄 Proposed |
+| [006](006-nova-m2m-service-tokens.md) | Nova M2M service tokens | 📄 Proposed |
 
 ## Contributing
 
