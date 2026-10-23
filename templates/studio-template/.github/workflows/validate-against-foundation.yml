@@ -33,6 +33,10 @@ jobs:
         run: |
           bash foundation/scripts/validate-studio.sh .
 
+      - name: Identity Contract Check (warning mode)
+        run: |
+          bash foundation/scripts/validate-identity-contract.sh .
+
       - name: Validate Against Canonical Schemas
         run: |
           set -euo pipefail
