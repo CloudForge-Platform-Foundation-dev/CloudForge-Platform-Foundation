@@ -260,3 +260,27 @@ rules:
     owner: platform-governance
     introduced_version: "1.0.0"
     deprecated_version: null
+
+  - rule_id: OAS-cloudforge-auth-401-403
+    domain: openapi
+    version: "1.0.0"
+    severity: MEDIUM
+    title: "Auth-enforcing operations must declare 401 and 403"
+    description: >
+      Every operation whose effective "security" requirement is mandatory
+      (non-empty, with no empty requirement entry) must declare both "401"
+      and "403" under "responses".
+    purpose: >
+      Identity Contract v1 section 5 separates 401 (authentication) from 403
+      (authorization) and section 8 requires the gate to flag operations that
+      omit either. Advisory (warn in .spectral.yaml) and kept at WARN gate
+      behavior while Studios are brought into line.
+    requirement_id: null
+    implementation: ".spectral.yaml (cloudforge-auth-401-403)"
+    evidence_type: "spec-lint-finding"
+    gate_behavior: WARN
+    references: []
+    status: active
+    owner: platform-governance
+    introduced_version: "1.0.0"   # TODO user: confirm versioning policy for a new entry
+    deprecated_version: null
