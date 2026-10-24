@@ -1,4 +1,7 @@
 ﻿extends: ["spectral:oas", "spectral:asyncapi"]
+functionsDir: "./functions"
+functions:
+  - cloudforgeAuthResponses
 
 rules:
   # Enforce CloudForge API standards
@@ -60,3 +63,11 @@ rules:
         # explicitly rather than relying on a single case-insensitive regex.
         notMatch: "(token|Token|TOKEN|password|Password|PASSWORD|secret|Secret|SECRET|apikey|apiKey|api_key|APIKEY|access_token|accessToken|ACCESS_TOKEN)"
     severity: error
+
+  cloudforge-auth-401-403:
+    description: "Operations that enforce auth must declare both 401 and 403 (Identity Contract v1, sections 5 and 8)"
+    message: "{{error}}"
+    given: "$"
+    then:
+      function: cloudforgeAuthResponses
+    severity: warn
