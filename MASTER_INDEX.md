@@ -55,7 +55,7 @@
 | [ADR-003](docs/adr/003-three-tier-governance.md) | ✅ Approved | Three-Tier Governance Model |
 | [ADR-004](docs/adr/004-smart-gate-governance.md) | ✅ Approved | Smart Gate Governance |
 | [ADR-005](docs/adr/005-identity-contract-v1.md) | 📄 Proposed | Identity Contract v1 as the platform JWT standard |
-| [ADR-006](docs/adr/006-nova-m2m-service-tokens.md) | 📄 Proposed | Nova M2M service tokens |
+| [ADR-006](docs/adr/006-nova-m2m-service-tokens.md) | 🗃️ Superseded by [ADR-007](docs/adr/007-m2m-service-token-issuance-policy.md) | Nova M2M service tokens |
 | [ADR-007](docs/adr/007-m2m-service-token-issuance-policy.md) | ✅ Approved | M2M service token issuance policy |
 
 ---

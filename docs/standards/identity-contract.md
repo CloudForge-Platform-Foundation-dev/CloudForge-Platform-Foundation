@@ -178,7 +178,7 @@ The Foundation gate (see [ADR-005](../adr/005-identity-contract-v1.md); to be im
 ## 9. Not covered in v1 (kept for a later round)
 
 - Refresh token flow
-- Service-to-service (M2M) token issuance policy. Nova already uses client-credentials tokens from the Identity Service to call Knowledge with `knowledge:read`. The claims of those tokens follow this contract; the issuance policy is covered by [ADR-006](../adr/006-nova-m2m-service-tokens.md).
+- Service-to-service (M2M) token issuance policy. Nova already uses client-credentials tokens from the Identity Service to call Knowledge with `knowledge:read`. The claims of those tokens follow this contract; the issuance policy is covered by [ADR-007](../adr/007-m2m-service-token-issuance-policy.md).
 - Wildcard/hierarchical scopes
 - Rate limiting tied to `sub`
 - Clock-skew leeway for `exp`/`iat` (none today; can be added as a minor release without moving to v2)
