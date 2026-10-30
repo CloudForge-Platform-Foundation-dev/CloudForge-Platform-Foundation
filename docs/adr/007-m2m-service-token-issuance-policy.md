@@ -2,7 +2,7 @@
 
 ## Status
 
-📄 Proposed
+✅ Approved
 
 ## Context
 
@@ -143,5 +143,5 @@ Options B and C above were rejected.
 
 ---
 
-*Decided: (set when the status changes to Approved)*
-*Author: (maintainer to fill in)*
+*Decided: 2026-10-30*
+*Author: niphan1000-cyber1000*

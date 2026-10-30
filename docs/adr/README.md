@@ -33,7 +33,7 @@ Examples:
 | [004](004-smart-gate-governance.md) | Smart Gate Governance | ✅ Approved |
 | [005](005-identity-contract-v1.md) | Identity Contract v1 as the platform JWT standard | 📄 Proposed |
 | [006](006-nova-m2m-service-tokens.md) | Nova M2M service tokens | 📄 Proposed |
-| [007](007-m2m-service-token-issuance-policy.md) | M2M service token issuance policy | 📄 Proposed |
+| [007](007-m2m-service-token-issuance-policy.md) | M2M service token issuance policy | ✅ Approved |
 
 ## Contributing
 
