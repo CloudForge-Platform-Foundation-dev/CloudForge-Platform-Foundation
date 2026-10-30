@@ -2,7 +2,7 @@
 
 ## Status
 
-📄 Proposed
+🗃️ Superseded by [ADR-007](007-m2m-service-token-issuance-policy.md)
 
 ## Context
 
