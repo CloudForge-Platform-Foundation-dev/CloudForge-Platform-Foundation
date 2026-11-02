@@ -33,7 +33,7 @@
 | [docs/standards/engineering-standards.md](docs/standards/engineering-standards.md) | ✅ Approved | Coding and development standards |
 | [docs/standards/api-standards.md](docs/standards/api-standards.md) | ✅ Approved | API design guidelines |
 | [docs/standards/naming-conventions.md](docs/standards/naming-conventions.md) | ✅ Approved | Naming conventions across all repos |
-| [docs/standards/identity-contract.md](docs/standards/identity-contract.md) | 📄 Proposed | Identity Contract v1: platform JWT claims, scopes and error semantics |
+| [docs/standards/identity-contract.md](docs/standards/identity-contract.md) | ✅ Approved | Identity Contract v1: platform JWT claims, scopes and error semantics |
 
 ### Data Model
 | Document | Status | Description |
@@ -54,7 +54,7 @@
 | [ADR-002](docs/adr/002-json-schema-for-canonical-model.md) | ✅ Approved | JSON Schema for Canonical Data Model |
 | [ADR-003](docs/adr/003-three-tier-governance.md) | ✅ Approved | Three-Tier Governance Model |
 | [ADR-004](docs/adr/004-smart-gate-governance.md) | ✅ Approved | Smart Gate Governance |
-| [ADR-005](docs/adr/005-identity-contract-v1.md) | 📄 Proposed | Identity Contract v1 as the platform JWT standard |
+| [ADR-005](docs/adr/005-identity-contract-v1.md) | ✅ Approved | Identity Contract v1 as the platform JWT standard |
 | [ADR-006](docs/adr/006-nova-m2m-service-tokens.md) | 🗃️ Superseded by [ADR-007](docs/adr/007-m2m-service-token-issuance-policy.md) | Nova M2M service tokens |
 | [ADR-007](docs/adr/007-m2m-service-token-issuance-policy.md) | ✅ Approved | M2M service token issuance policy |
 

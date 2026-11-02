@@ -1,6 +1,6 @@
 # CloudForge Identity Contract — v1
 
-**Status:** Proposed (see [ADR-005](../adr/005-identity-contract-v1.md)) — implemented in `cloudforge-auth-core` (latest release tag `v1.1.8`); awaiting Foundation approval
+**Status:** Approved (see [ADR-005](../adr/005-identity-contract-v1.md)) — implemented in `cloudforge-auth-core` (latest release tag `v1.1.8`)
 **Owner:** Foundation
 **Contract Version:** `identity-contract-v1`
 **Applies to:** every Studio (Ingest, Knowledge, Nova, Security, and future Studios)
@@ -191,7 +191,7 @@ The Foundation gate (see [ADR-005](../adr/005-identity-contract-v1.md); to be im
 Agreed approach: **One Contract → One Implementation → Many Studios**.
 
 1. [x] Draft the contract
-2. [ ] Foundation review and approval (see ADR-005)
+2. [x] Foundation review and approval (see ADR-005)
 3. [x] Implement `cloudforge-auth-core` to the contract (`v1.1.7`; `v1.1.8` released)
 4. [x] Migrate Ingest to auth-core
 5. [x] Migrate Knowledge to auth-core
@@ -234,6 +234,7 @@ Checked from `origin/main` of each repository.
 
 Entries before 2026-10-19 date from the draft that lived outside Foundation.
 
+- **2026-11-02** — Status changed from Proposed to Approved (see ADR-005). No change to the claims shape, so the contract stays `identity-contract-v1`.
 - **2026-10-19** — Moved into Foundation as `docs/standards/identity-contract.md` (status Proposed, see ADR-005). Section 3 now points to a namespace-level registry (Appendix A). Section 7 adoption detail moved to Appendix B. Review notes about the Identity Service are not part of this document. No change to the claims shape, so the contract stays `identity-contract-v1`.
 - **2026-10-17** — Recorded adoption status for every Studio; clarified that the gate pattern for `claims["scopes"]` must not match `scopes` in a request body; pointed the M2M note at a separate ADR. No change to the claims shape.
 - **2026-10-14** — Recorded adoption status (section 7, checklist, section 9). No change to contract content.

@@ -17,8 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Studio template for bootstrapping
 - Validation scripts
 - GitHub Actions workflows
-- ADR-005 (adopt Identity Contract v1 as the platform JWT standard), Proposed, and ADR-006 (Nova M2M service tokens), Superseded by ADR-007
-- Identity Contract v1 standard (`docs/standards/identity-contract.md`), Proposed
+- ADR-005 (adopt Identity Contract v1 as the platform JWT standard), Approved, and ADR-006 (Nova M2M service tokens), Superseded by ADR-007
+- Identity Contract v1 standard (`docs/standards/identity-contract.md`), Approved
 - ADR-007 (M2M service token issuance policy, to supersede ADR-006 once Approved), Approved
 
 ## [0.1.0] - 2026-08-10
