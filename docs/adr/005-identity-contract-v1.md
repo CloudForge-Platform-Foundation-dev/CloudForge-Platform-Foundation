@@ -2,7 +2,7 @@
 
 ## Status
 
-📄 Proposed
+✅ Approved
 
 ## Context
 
@@ -99,5 +99,5 @@ Options A and C above were rejected. Folding the machine-to-machine question int
 
 ---
 
-*Decided: (set when the status changes to Approved)*
-*Author: (maintainer to fill in)*
+*Decided: 2026-11-02*
+*Author: niphan1000-cyber1000*
